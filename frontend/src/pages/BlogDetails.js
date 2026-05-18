@@ -155,24 +155,31 @@ function BlogDetails(){
 
                <img
 
-                  src={blog.featureImage}
+   src={blog.featureImage}
 
-                  alt={blog.title}
+   alt={blog.title}
 
-                  width="100%"
+   style={{
 
-                  style={{
+      width:"100%",
 
-                     borderRadius:"10px",
+      maxWidth:"900px",
 
-                     maxHeight:"500px",
+      height:"400px",
 
-                     objectFit:"cover"
+      objectFit:"contain",
 
-                  }}
+      display:"block",
 
-               />
+      margin:"0 auto",
 
+      borderRadius:"10px",
+
+      background:"#f5f5f5"
+
+   }}
+
+/>
             )
 
          }
