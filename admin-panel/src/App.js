@@ -1,7 +1,9 @@
 import {
+
    BrowserRouter,
    Routes,
    Route
+
 } from "react-router-dom";
 
 import Login from "./pages/Login";
@@ -30,6 +32,8 @@ import TagBlogs from "./pages/TagBlogs";
 
 import CategoryBlogs from "./pages/CategoryBlogs";
 
+import Layout from "./components/Layout";
+
 function App(){
 
    return(
@@ -38,8 +42,14 @@ function App(){
 
          <Routes>
 
+            {/* Public Routes */}
             <Route
                path="/"
+               element={<Login />}
+         />
+
+            <Route
+               path="/login"
                element={<Login />}
             />
 
@@ -48,134 +58,74 @@ function App(){
                element={<Register />}
             />
 
+            {/* Protected Admin Routes */}
+
             <Route
-               path="/dashboard"
+
                element={
 
                   <ProtectedRoute>
 
-                     <Dashboard />
+                     <Layout />
 
                   </ProtectedRoute>
 
                }
-            />
 
-            <Route
-               path="/create-blog"
-               element={
+            >
 
-                  <ProtectedRoute>
+               <Route
+                  path="/dashboard"
+                  element={<Dashboard />}
+               />
 
-                     <CreateBlog />
+               <Route
+                  path="/create-blog"
+                  element={<CreateBlog />}
+               />
 
-                  </ProtectedRoute>
+               <Route
+                  path="/blogs"
+                  element={<Blogs />}
+               />
 
-               }
-            />
+               <Route
+                  path="/blogs/:slug"
+                  element={<BlogDetails />}
+               />
 
-            <Route
-               path="/blogs"
-               element={
+               <Route
+                  path="/drafts"
+                  element={<Drafts />}
+               />
 
-                  <ProtectedRoute>
+               <Route
+                  path="/users"
+                  element={<Users />}
+               />
 
-                     <Blogs />
+               <Route
+                  path="/edit-blog/:id"
+                  element={<EditBlog />}
+               />
 
-                  </ProtectedRoute>
+               <Route
+                  path="/preview-blog"
+                  element={<PreviewBlog />}
+               />
 
-               }
-            />
+               <Route
+                  path="/tag-blogs/:tag"
+                  element={<TagBlogs />}
+               />
 
-            <Route
-               path="/blogs/:slug"
-               element={
+               <Route
+                  path="/category-blogs/:category"
+                  element={<CategoryBlogs />}
+               />
 
-                  <ProtectedRoute>
+            </Route>
 
-                     <BlogDetails />
-
-                  </ProtectedRoute>
-
-               }
-            />
-
-            <Route
-               path="/drafts"
-               element={
-
-                  <ProtectedRoute>
-
-                     <Drafts />
-
-                  </ProtectedRoute>
-
-               }
-            />
-
-            <Route
-               path="/users"
-               element={
-
-                  <ProtectedRoute>
-
-                     <Users />
-
-                  </ProtectedRoute>
-
-               }
-            />
-
-            <Route
-               path="/edit-blog/:id"
-               element={
-
-                  <ProtectedRoute>
-
-                     <EditBlog />
-
-                  </ProtectedRoute>
-
-               }
-            />
-
-            <Route
-               path="/preview-blog"
-               element={
-
-                  <ProtectedRoute>
-
-                     <PreviewBlog />
-
-                  </ProtectedRoute>
-
-               }
-            />
-
-            <Route
-               path="/tag-blogs/:tag"
-               element={
-
-                  <ProtectedRoute>
-
-                     <TagBlogs />
-
-                  </ProtectedRoute>
-
-               }
-            />
-            <Route
-               path="/category-blogs/:category"
-               element={
-
-                  <ProtectedRoute>
-
-                     <CategoryBlogs />
-
-                  </ProtectedRoute>
-
-               }
-            />
          </Routes>
 
       </BrowserRouter>

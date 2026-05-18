@@ -11,7 +11,13 @@ const {
    getBlogById,
    updateBlog,
    deleteBlog,
-   publishBlog
+   publishBlog,
+
+   // NEW CONTROLLERS
+
+   getBlogsByCategory,
+   getBlogsByTag,
+   getBlogsByAuthor
 
 } = require("../controllers/blogController");
 
@@ -27,9 +33,13 @@ const {
 
 } = require("../middleware/roleMiddleware");
 
-const upload = require(
-   "../middleware/uploadMiddleware"
-);
+const upload =
+require("../middleware/uploadMiddleware");
+
+
+// =============================
+// CREATE BLOG
+// =============================
 
 router.post(
 
@@ -61,10 +71,20 @@ router.post(
 
 );
 
+
+// =============================
+// GET ALL BLOGS
+// =============================
+
 router.get(
    "/",
    getBlogs
 );
+
+
+// =============================
+// GET DRAFT BLOGS
+// =============================
 
 router.get(
 
@@ -76,6 +96,11 @@ router.get(
 
 );
 
+
+// =============================
+// GET BLOG BY ID
+// =============================
+
 router.get(
 
    "/edit/:id",
@@ -86,10 +111,62 @@ router.get(
 
 );
 
+
+// =============================
+// CATEGORY BLOGS
+// =============================
+
 router.get(
-   "/:slug",
-   getBlogBySlug
+
+   "/category/:category",
+
+   getBlogsByCategory
+
 );
+
+
+// =============================
+// TAG BLOGS
+// =============================
+
+router.get(
+
+   "/tag/:tag",
+
+   getBlogsByTag
+
+);
+
+
+// =============================
+// AUTHOR BLOGS
+// =============================
+
+router.get(
+
+   "/author/:author",
+
+   getBlogsByAuthor
+
+);
+
+
+// =============================
+// GET BLOG BY SLUG
+// =============================
+
+router.get(
+
+   "/:slug",
+
+   getBlogBySlug
+
+);
+
+
+// =============================
+// UPDATE BLOG
+// =============================
 
 router.put(
 
@@ -121,6 +198,11 @@ router.put(
 
 );
 
+
+// =============================
+// PUBLISH BLOG
+// =============================
+
 router.put(
 
    "/publish/:id",
@@ -136,6 +218,11 @@ router.put(
    publishBlog
 
 );
+
+
+// =============================
+// DELETE BLOG
+// =============================
 
 router.delete(
 

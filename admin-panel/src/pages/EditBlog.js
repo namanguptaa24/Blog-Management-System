@@ -15,6 +15,9 @@ function EditBlog(){
 
    const navigate = useNavigate();
 
+   const [loading,setLoading] =
+   useState(false);
+
    const [formData,setFormData] =
    useState({
 
@@ -131,14 +134,6 @@ function EditBlog(){
 
          console.log(error);
 
-         alert(
-
-            error.response?.data?.message ||
-
-            "Failed To Fetch Blog"
-
-         );
-
       }
 
    };
@@ -160,6 +155,8 @@ function EditBlog(){
 
       e.preventDefault();
 
+      setLoading(true);
+
       try{
 
          const token =
@@ -170,109 +167,25 @@ function EditBlog(){
          const data =
          new FormData();
 
-         data.append(
-            "title",
-            formData.title
-         );
+         Object.keys(formData).forEach((key)=>{
 
-         data.append(
-            "content",
-            formData.content
-         );
+            if(
 
-         data.append(
-            "metaTitle",
-            formData.metaTitle
-         );
+               formData[key] !== null
 
-         data.append(
-            "metaDescription",
-            formData.metaDescription
-         );
+            ){
 
-         data.append(
-            "canonicalUrl",
-            formData.canonicalUrl
-         );
+               data.append(
 
-         data.append(
-            "ogTitle",
-            formData.ogTitle
-         );
+                  key,
 
-         data.append(
-            "ogDescription",
-            formData.ogDescription
-         );
+                  formData[key]
 
-         data.append(
-            "twitterTitle",
-            formData.twitterTitle
-         );
+               );
 
-         data.append(
-            "twitterDescription",
-            formData.twitterDescription
-         );
+            }
 
-         data.append(
-            "tags",
-            formData.tags
-         );
-
-         data.append(
-            "categories",
-            formData.categories
-         );
-
-         data.append(
-            "faqQuestion",
-            formData.faqQuestion
-         );
-
-         data.append(
-            "faqAnswer",
-            formData.faqAnswer
-         );
-
-         data.append(
-            "internalLinks",
-            formData.internalLinks
-         );
-
-         data.append(
-            "externalLinks",
-            formData.externalLinks
-         );
-
-         data.append(
-            "status",
-            formData.status
-         );
-
-         if(formData.featureImage){
-
-            data.append(
-
-               "featureImage",
-
-               formData.featureImage
-
-            );
-
-         }
-
-         if(formData.ogImage){
-
-            data.append(
-
-               "ogImage",
-
-               formData.ogImage
-
-            );
-
-         }
+         });
 
          await API.put(
 
@@ -296,7 +209,9 @@ function EditBlog(){
 
          );
 
-         alert("Blog Updated");
+         alert(
+            "Blog Updated Successfully"
+         );
 
          navigate("/blogs");
 
@@ -312,238 +227,478 @@ function EditBlog(){
 
          );
 
+      }finally{
+
+         setLoading(false);
+
       }
 
    };
 
    return(
 
-      <div>
+      <div className="min-h-screen bg-gray-100 p-8">
 
-         <h1>Edit Blog</h1>
+         <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-10">
 
-         <form onSubmit={handleSubmit}>
+            {/* Heading */}
 
-            <input
-               type="text"
-               name="title"
-               placeholder="Title"
-               value={formData.title}
-               onChange={handleChange}
-            />
+            <div className="mb-10">
 
-            <br /><br />
+               <h1 className="text-5xl font-bold text-gray-900">
 
-            <textarea
-               name="content"
-               placeholder="Content"
-               value={formData.content}
-               onChange={handleChange}
-            />
+                  Edit Blog
 
-            <br /><br />
+               </h1>
 
-            <input
-               type="text"
-               name="metaTitle"
-               placeholder="Meta Title"
-               value={formData.metaTitle}
-               onChange={handleChange}
-            />
+               <p className="text-gray-500 mt-3 text-lg">
 
-            <br /><br />
+                  Update your blog content, SEO and metadata
 
-            <input
-               type="text"
-               name="metaDescription"
-               placeholder="Meta Description"
-               value={formData.metaDescription}
-               onChange={handleChange}
-            />
+               </p>
 
-            <br /><br />
+            </div>
 
-            <input
-               type="text"
-               name="canonicalUrl"
-               placeholder="Canonical URL"
-               value={formData.canonicalUrl}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <h3>Feature Image</h3>
-
-            <input
-               type="file"
-               name="featureImage"
-               onChange={(e)=>{
-
-                  setFormData({
-
-                     ...formData,
-
-                     featureImage:
-                     e.target.files[0]
-
-                  });
-
-               }}
-            />
-
-            <br /><br />
-
-            <h3>Open Graph SEO</h3>
-
-            <input
-               type="text"
-               name="ogTitle"
-               placeholder="OG Title"
-               value={formData.ogTitle}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="ogDescription"
-               placeholder="OG Description"
-               value={formData.ogDescription}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <h3>OG Image Upload</h3>
-
-            <input
-               type="file"
-               name="ogImage"
-               onChange={(e)=>{
-
-                  setFormData({
-
-                     ...formData,
-
-                     ogImage:
-                     e.target.files[0]
-
-                  });
-
-               }}
-            />
-
-            <br /><br />
-
-            <h3>Twitter SEO</h3>
-
-            <input
-               type="text"
-               name="twitterTitle"
-               placeholder="Twitter Title"
-               value={formData.twitterTitle}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="twitterDescription"
-               placeholder="Twitter Description"
-               value={formData.twitterDescription}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="tags"
-               placeholder="Tags"
-               value={formData.tags}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="categories"
-               placeholder="Categories"
-               value={formData.categories}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="faqQuestion"
-               placeholder="FAQ Question"
-               value={formData.faqQuestion}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="faqAnswer"
-               placeholder="FAQ Answer"
-               value={formData.faqAnswer}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="internalLinks"
-               placeholder="Internal Links"
-               value={formData.internalLinks}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <input
-               type="text"
-               name="externalLinks"
-               placeholder="External Links"
-               value={formData.externalLinks}
-               onChange={handleChange}
-            />
-
-            <br /><br />
-
-            <select
-               name="status"
-               value={formData.status}
-               onChange={handleChange}
+            <form
+               onSubmit={handleSubmit}
+               className="space-y-8"
             >
 
-               <option value="draft">
-                  Draft
-               </option>
+               {/* Title */}
 
-               <option value="published">
-                  Published
-               </option>
+               <input
 
-            </select>
+                  type="text"
 
-            <br /><br />
+                  name="title"
 
-            <button type="submit">
+                  placeholder="Blog Title"
 
-               Update Blog
+                  value={formData.title}
 
-            </button>
+                  onChange={handleChange}
 
-         </form>
+                  className="w-full px-6 py-4 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg"
+
+               />
+
+               {/* Content */}
+
+               <textarea
+
+                  name="content"
+
+                  placeholder="Write Blog Content..."
+
+                  value={formData.content}
+
+                  onChange={handleChange}
+
+                  rows="10"
+
+                  className="w-full px-6 py-4 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg resize-none"
+
+               />
+
+               {/* SEO Grid */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="metaTitle"
+
+                     placeholder="Meta Title"
+
+                     value={formData.metaTitle}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="metaDescription"
+
+                     placeholder="Meta Description"
+
+                     value={formData.metaDescription}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+
+                  />
+
+               </div>
+
+               {/* Canonical */}
+
+               <input
+
+                  type="text"
+
+                  name="canonicalUrl"
+
+                  placeholder="Canonical URL"
+
+                  value={formData.canonicalUrl}
+
+                  onChange={handleChange}
+
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+
+               />
+
+               {/* Images */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                  {/* Feature */}
+
+                  <div className="border-2 border-dashed border-gray-300 rounded-3xl p-8 bg-gray-50 text-center">
+
+                     <h2 className="text-2xl font-bold mb-5">
+
+                        Feature Image
+
+                     </h2>
+
+                     <input
+
+                        type="file"
+
+                        name="featureImage"
+
+                        onChange={(e)=>{
+
+                           setFormData({
+
+                              ...formData,
+
+                              featureImage:
+                              e.target.files[0]
+
+                           });
+
+                        }}
+
+                        className="w-full"
+
+                     />
+
+                  </div>
+
+                  {/* OG */}
+
+                  <div className="border-2 border-dashed border-gray-300 rounded-3xl p-8 bg-gray-50 text-center">
+
+                     <h2 className="text-2xl font-bold mb-5">
+
+                        OG Image
+
+                     </h2>
+
+                     <input
+
+                        type="file"
+
+                        name="ogImage"
+
+                        onChange={(e)=>{
+
+                           setFormData({
+
+                              ...formData,
+
+                              ogImage:
+                              e.target.files[0]
+
+                           });
+
+                        }}
+
+                        className="w-full"
+
+                     />
+
+                  </div>
+
+               </div>
+
+               {/* Open Graph */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="ogTitle"
+
+                     placeholder="OG Title"
+
+                     value={formData.ogTitle}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="ogDescription"
+
+                     placeholder="OG Description"
+
+                     value={formData.ogDescription}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+               </div>
+
+               {/* Twitter */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="twitterTitle"
+
+                     placeholder="Twitter Title"
+
+                     value={formData.twitterTitle}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="twitterDescription"
+
+                     placeholder="Twitter Description"
+
+                     value={formData.twitterDescription}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+               </div>
+
+               {/* Tags */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="tags"
+
+                     placeholder="Tags (comma separated)"
+
+                     value={formData.tags}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="categories"
+
+                     placeholder="Categories (comma separated)"
+
+                     value={formData.categories}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+               </div>
+
+               {/* FAQ */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="faqQuestion"
+
+                     placeholder="FAQ Question"
+
+                     value={formData.faqQuestion}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="faqAnswer"
+
+                     placeholder="FAQ Answer"
+
+                     value={formData.faqAnswer}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+               </div>
+
+               {/* Links */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <input
+
+                     type="text"
+
+                     name="internalLinks"
+
+                     placeholder="Internal Links"
+
+                     value={formData.internalLinks}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+                  <input
+
+                     type="text"
+
+                     name="externalLinks"
+
+                     placeholder="External Links"
+
+                     value={formData.externalLinks}
+
+                     onChange={handleChange}
+
+                     className="px-5 py-4 rounded-2xl border border-gray-300"
+
+                  />
+
+               </div>
+
+               {/* Status */}
+
+               <select
+
+                  name="status"
+
+                  value={formData.status}
+
+                  onChange={handleChange}
+
+                  className="w-full px-5 py-4 rounded-2xl border border-gray-300"
+
+               >
+
+                  <option value="draft">
+
+                     Draft
+
+                  </option>
+
+                  <option value="published">
+
+                     Published
+
+                  </option>
+
+               </select>
+
+               {/* Buttons */}
+
+               <div className="flex flex-wrap gap-5 pt-6">
+
+                  <button
+
+                     type="submit"
+
+                     disabled={loading}
+
+                     className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:opacity-90 transition"
+
+                  >
+
+                     {
+
+                        loading
+
+                        ?
+
+                        "Updating..."
+
+                        :
+
+                        "Update Blog"
+
+                     }
+
+                  </button>
+
+                  <button
+
+                     type="button"
+
+                     onClick={()=>navigate("/blogs")}
+
+                     className="border border-gray-300 px-10 py-4 rounded-2xl font-semibold hover:bg-gray-100 transition"
+
+                  >
+
+                     Cancel
+
+                  </button>
+
+               </div>
+
+            </form>
+
+         </div>
 
       </div>
 

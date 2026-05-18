@@ -2,6 +2,11 @@ const Blog = require("../models/Blog");
 
 const slugify = require("slugify");
 
+
+// =====================================
+// CREATE BLOG
+// =====================================
+
 exports.createBlog = async(req,res)=>{
 
    try{
@@ -16,7 +21,8 @@ exports.createBlog = async(req,res)=>{
 
       );
 
-      const blog = await Blog.create({
+      const blog =
+      await Blog.create({
 
          title:req.body.title,
 
@@ -46,12 +52,18 @@ exports.createBlog = async(req,res)=>{
          req.body.twitterDescription,
 
          featureImage:
-         req.files?.featureImage?.[0]?.path ||
+
+         req.files?.featureImage?.[0]?.path
+
+         ||
 
          "",
 
          ogImage:
-         req.files?.ogImage?.[0]?.path ||
+
+         req.files?.ogImage?.[0]?.path
+
+         ||
 
          "",
 
@@ -59,21 +71,28 @@ exports.createBlog = async(req,res)=>{
 
          Array.isArray(req.body.tags)
 
-         ? req.body.tags
+         ?
 
-         : req.body.tags
-         ?.split(","),
+         req.body.tags
+
+         :
+
+         req.body.tags?.split(","),
 
          categories:
 
          Array.isArray(req.body.categories)
 
-         ? req.body.categories
+         ?
 
-         : req.body.categories
-         ?.split(","),
+         req.body.categories
+
+         :
+
+         req.body.categories?.split(","),
 
          faq:[
+
             {
 
                question:
@@ -92,10 +111,13 @@ exports.createBlog = async(req,res)=>{
             req.body.internalLinks
          )
 
-         ? req.body.internalLinks
+         ?
 
-         : req.body.internalLinks
-         ?.split(","),
+         req.body.internalLinks
+
+         :
+
+         req.body.internalLinks?.split(","),
 
          externalLinks:
 
@@ -103,10 +125,13 @@ exports.createBlog = async(req,res)=>{
             req.body.externalLinks
          )
 
-         ? req.body.externalLinks
+         ?
 
-         : req.body.externalLinks
-         ?.split(","),
+         req.body.externalLinks
+
+         :
+
+         req.body.externalLinks?.split(","),
 
          status:req.body.status,
 
@@ -122,7 +147,9 @@ exports.createBlog = async(req,res)=>{
 
       });
 
-   }catch(error){
+   }
+
+   catch(error){
 
       console.log(error);
 
@@ -136,11 +163,17 @@ exports.createBlog = async(req,res)=>{
 
 };
 
+
+// =====================================
+// GET PUBLISHED BLOGS
+// =====================================
+
 exports.getBlogs = async(req,res)=>{
 
    try{
 
-      const blogs = await Blog.find({
+      const blogs =
+      await Blog.find({
 
          status:"published"
 
@@ -162,7 +195,9 @@ exports.getBlogs = async(req,res)=>{
 
       res.status(200).json(blogs);
 
-   }catch(error){
+   }
+
+   catch(error){
 
       res.status(500).json({
 
@@ -174,6 +209,11 @@ exports.getBlogs = async(req,res)=>{
 
 };
 
+
+// =====================================
+// GET DRAFT BLOGS
+// =====================================
+
 exports.getDraftBlogs = async(req,res)=>{
 
    try{
@@ -184,14 +224,48 @@ exports.getDraftBlogs = async(req,res)=>{
 
       };
 
-      if(req.user.role === "AUTHOR"){
+      // AUTHOR
+      // ONLY OWN DRAFTS
+
+      if(
+
+         req.user.role === "AUTHOR"
+
+      ){
 
          query.author =
          req.user.id;
 
       }
 
-      if(req.user.role === "VIEWER"){
+      // SUPER_ADMIN + EDITOR
+      // SEE ALL DRAFTS
+
+      if(
+
+         req.user.role === "SUPER_ADMIN"
+
+         ||
+
+         req.user.role === "EDITOR"
+
+      ){
+
+         query = {
+
+            status:"draft"
+
+         };
+
+      }
+
+      // VIEWER BLOCKED
+
+      if(
+
+         req.user.role === "VIEWER"
+
+      ){
 
          return res.status(403).json({
 
@@ -201,7 +275,8 @@ exports.getDraftBlogs = async(req,res)=>{
 
       }
 
-      const blogs = await Blog.find(query)
+      const blogs =
+      await Blog.find(query)
 
       .populate(
 
@@ -219,7 +294,11 @@ exports.getDraftBlogs = async(req,res)=>{
 
       res.status(200).json(blogs);
 
-   }catch(error){
+   }
+
+   catch(error){
+
+      console.log(error);
 
       res.status(500).json({
 
@@ -231,15 +310,23 @@ exports.getDraftBlogs = async(req,res)=>{
 
 };
 
+
+// =====================================
+// GET BLOG BY SLUG
+// =====================================
+
 exports.getBlogBySlug = async(req,res)=>{
 
    try{
 
-      const blog = await Blog.findOne({
+      const blog =
+      await Blog.findOne({
 
          slug:req.params.slug
 
-      }).populate(
+      })
+
+      .populate(
 
          "author",
 
@@ -259,7 +346,9 @@ exports.getBlogBySlug = async(req,res)=>{
 
       res.status(200).json(blog);
 
-   }catch(error){
+   }
+
+   catch(error){
 
       res.status(500).json({
 
@@ -270,6 +359,11 @@ exports.getBlogBySlug = async(req,res)=>{
    }
 
 };
+
+
+// =====================================
+// GET BLOG BY ID
+// =====================================
 
 exports.getBlogById = async(req,res)=>{
 
@@ -290,9 +384,32 @@ exports.getBlogById = async(req,res)=>{
 
       }
 
+      // AUTHOR SECURITY
+
+      if(
+
+         req.user.role === "AUTHOR"
+
+         &&
+
+         blog.author.toString() !==
+         req.user.id
+
+      ){
+
+         return res.status(403).json({
+
+            message:"Access Denied"
+
+         });
+
+      }
+
       res.status(200).json(blog);
 
-   }catch(error){
+   }
+
+   catch(error){
 
       res.status(500).json({
 
@@ -305,11 +422,194 @@ exports.getBlogById = async(req,res)=>{
 };
 
 
+// =====================================
+// GET BLOGS BY CATEGORY
+// =====================================
+
+exports.getBlogsByCategory = async(req,res)=>{
+
+   try{
+
+      const blogs =
+      await Blog.find({
+
+         categories:{
+
+            $regex:req.params.category,
+
+            $options:"i"
+
+         },
+
+         status:"published"
+
+      })
+
+      .populate(
+
+         "author",
+
+         "name email role"
+
+      )
+
+      .sort({
+
+         createdAt:-1
+
+      });
+
+      res.status(200).json(blogs);
+
+   }
+
+   catch(error){
+
+      console.log(error);
+
+      res.status(500).json({
+
+         message:error.message
+
+      });
+
+   }
+
+};
+
+
+// =====================================
+// GET BLOGS BY TAG
+// =====================================
+
+exports.getBlogsByTag = async(req,res)=>{
+
+   try{
+
+      const blogs =
+      await Blog.find({
+
+         tags:{
+
+            $regex:req.params.tag,
+
+            $options:"i"
+
+         },
+
+         status:"published"
+
+      })
+
+      .populate(
+
+         "author",
+
+         "name email role"
+
+      )
+
+      .sort({
+
+         createdAt:-1
+
+      });
+
+      res.status(200).json(blogs);
+
+   }
+
+   catch(error){
+
+      console.log(error);
+
+      res.status(500).json({
+
+         message:error.message
+
+      });
+
+   }
+
+};
+
+
+// =====================================
+// GET BLOGS BY AUTHOR
+// =====================================
+
+exports.getBlogsByAuthor = async(req,res)=>{
+
+   try{
+
+      const blogs =
+      await Blog.find({
+
+         status:"published"
+
+      })
+
+      .populate(
+
+         "author",
+
+         "name email role"
+
+      )
+
+      .sort({
+
+         createdAt:-1
+
+      });
+
+      const filteredBlogs =
+      blogs.filter((blog)=>
+
+         blog.author?.name
+         ?.toLowerCase()
+         .includes(
+
+            req.params.author
+            .toLowerCase()
+
+         )
+
+      );
+
+      res.status(200).json(
+
+         filteredBlogs
+
+      );
+
+   }
+
+   catch(error){
+
+      console.log(error);
+
+      res.status(500).json({
+
+         message:error.message
+
+      });
+
+   }
+
+};
+
+
+// =====================================
+// UPDATE BLOG
+// =====================================
+
 exports.updateBlog = async(req,res)=>{
 
    try{
 
-      const blog = await Blog.findById(
+      const blog =
+      await Blog.findById(
          req.params.id
       );
 
@@ -323,9 +623,13 @@ exports.updateBlog = async(req,res)=>{
 
       }
 
+      // AUTHOR SECURITY
+
       if(
 
-         req.user.role === "AUTHOR" &&
+         req.user.role === "AUTHOR"
+
+         &&
 
          blog.author.toString() !==
          req.user.id
@@ -342,6 +646,17 @@ exports.updateBlog = async(req,res)=>{
 
       blog.title =
       req.body.title;
+
+      blog.slug =
+      slugify(
+
+         req.body.title,
+
+         {
+            lower:true
+         }
+
+      );
 
       blog.content =
       req.body.content;
@@ -374,19 +689,25 @@ exports.updateBlog = async(req,res)=>{
 
       Array.isArray(req.body.tags)
 
-      ? req.body.tags
+      ?
 
-      : req.body.tags
-      ?.split(",");
+      req.body.tags
+
+      :
+
+      req.body.tags?.split(",");
 
       blog.categories =
 
       Array.isArray(req.body.categories)
 
-      ? req.body.categories
+      ?
 
-      : req.body.categories
-      ?.split(",");
+      req.body.categories
+
+      :
+
+      req.body.categories?.split(",");
 
       blog.internalLinks =
 
@@ -394,10 +715,13 @@ exports.updateBlog = async(req,res)=>{
          req.body.internalLinks
       )
 
-      ? req.body.internalLinks
+      ?
 
-      : req.body.internalLinks
-      ?.split(",");
+      req.body.internalLinks
+
+      :
+
+      req.body.internalLinks?.split(",");
 
       blog.externalLinks =
 
@@ -405,10 +729,13 @@ exports.updateBlog = async(req,res)=>{
          req.body.externalLinks
       )
 
-      ? req.body.externalLinks
+      ?
 
-      : req.body.externalLinks
-      ?.split(",");
+      req.body.externalLinks
+
+      :
+
+      req.body.externalLinks?.split(",");
 
       blog.faq = [
 
@@ -424,9 +751,12 @@ exports.updateBlog = async(req,res)=>{
 
       ];
 
+      // FEATURE IMAGE
+
       if(
 
          req.files?.featureImage?.[0]
+
       ){
 
          blog.featureImage =
@@ -437,9 +767,12 @@ exports.updateBlog = async(req,res)=>{
 
       }
 
+      // OG IMAGE
+
       if(
 
          req.files?.ogImage?.[0]
+
       ){
 
          blog.ogImage =
@@ -460,7 +793,9 @@ exports.updateBlog = async(req,res)=>{
 
       });
 
-   }catch(error){
+   }
+
+   catch(error){
 
       console.log(error);
 
@@ -474,11 +809,17 @@ exports.updateBlog = async(req,res)=>{
 
 };
 
+
+// =====================================
+// PUBLISH BLOG
+// =====================================
+
 exports.publishBlog = async(req,res)=>{
 
    try{
 
-      const blog = await Blog.findById(
+      const blog =
+      await Blog.findById(
          req.params.id
       );
 
@@ -492,9 +833,13 @@ exports.publishBlog = async(req,res)=>{
 
       }
 
+      // AUTHOR SECURITY
+
       if(
 
-         req.user.role === "AUTHOR" &&
+         req.user.role === "AUTHOR"
+
+         &&
 
          blog.author.toString() !==
          req.user.id
@@ -519,7 +864,9 @@ exports.publishBlog = async(req,res)=>{
 
       });
 
-   }catch(error){
+   }
+
+   catch(error){
 
       res.status(500).json({
 
@@ -531,11 +878,17 @@ exports.publishBlog = async(req,res)=>{
 
 };
 
+
+// =====================================
+// DELETE BLOG
+// =====================================
+
 exports.deleteBlog = async(req,res)=>{
 
    try{
 
-      const blog = await Blog.findById(
+      const blog =
+      await Blog.findById(
          req.params.id
       );
 
@@ -549,9 +902,13 @@ exports.deleteBlog = async(req,res)=>{
 
       }
 
+      // AUTHOR SECURITY
+
       if(
 
-         req.user.role === "AUTHOR" &&
+         req.user.role === "AUTHOR"
+
+         &&
 
          blog.author.toString() !==
          req.user.id
@@ -567,7 +924,9 @@ exports.deleteBlog = async(req,res)=>{
       }
 
       await Blog.findByIdAndDelete(
+
          req.params.id
+
       );
 
       res.status(200).json({
@@ -576,7 +935,9 @@ exports.deleteBlog = async(req,res)=>{
 
       });
 
-   }catch(error){
+   }
+
+   catch(error){
 
       res.status(500).json({
 

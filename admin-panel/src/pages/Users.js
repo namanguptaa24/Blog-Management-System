@@ -7,11 +7,9 @@ import {
 
 import API from "../services/api";
 
-import Loader
-from "../components/Loader";
+import Loader from "../components/Loader";
 
-import ErrorMessage
-from "../components/ErrorMessage";
+import ErrorMessage from "../components/ErrorMessage";
 
 function Users(){
 
@@ -96,8 +94,6 @@ function Users(){
 
       try{
 
-         setError("");
-
          const token =
          localStorage.getItem(
             "token"
@@ -122,23 +118,11 @@ function Users(){
 
          );
 
-         alert(
-            "Role Updated"
-         );
-
          fetchUsers();
 
       }catch(error){
 
          console.log(error);
-
-         setError(
-
-            error.response?.data?.message ||
-
-            "Role Update Failed"
-
-         );
 
       }
 
@@ -148,8 +132,6 @@ function Users(){
    async(id,status)=>{
 
       try{
-
-         setError("");
 
          const token =
          localStorage.getItem(
@@ -175,23 +157,11 @@ function Users(){
 
          );
 
-         alert(
-            "Status Updated"
-         );
-
          fetchUsers();
 
       }catch(error){
 
          console.log(error);
-
-         setError(
-
-            error.response?.data?.message ||
-
-            "Status Update Failed"
-
-         );
 
       }
 
@@ -202,9 +172,7 @@ function Users(){
 
       const confirmDelete =
       window.confirm(
-
          "Delete This User ?"
-
       );
 
       if(!confirmDelete){
@@ -214,8 +182,6 @@ function Users(){
       }
 
       try{
-
-         setError("");
 
          const token =
          localStorage.getItem(
@@ -239,23 +205,11 @@ function Users(){
 
          );
 
-         alert(
-            "User Deleted"
-         );
-
          fetchUsers();
 
       }catch(error){
 
          console.log(error);
-
-         setError(
-
-            error.response?.data?.message ||
-
-            "Delete Failed"
-
-         );
 
       }
 
@@ -270,11 +224,15 @@ function Users(){
 
       return(
 
-         <h1>
+         <div className="min-h-screen flex items-center justify-center">
 
-            Unauthorized Access
+            <h1 className="text-3xl font-bold text-red-500">
 
-         </h1>
+               Unauthorized Access
+
+            </h1>
+
+         </div>
 
       );
 
@@ -288,16 +246,41 @@ function Users(){
 
    return(
 
-      <div>
+      <div className="min-h-screen bg-gray-100 p-8">
 
-         <h1>User Management</h1>
+         {/* Header */}
 
-         <h2>
+         <div className="flex items-center justify-between mb-8">
 
-            Total Users:
-            {users.length}
+            <div>
 
-         </h2>
+               <h1 className="text-4xl font-bold text-gray-900">
+
+                  User Management
+
+               </h1>
+
+               <p className="text-gray-500 mt-2">
+
+                  Total Users:
+                  {" "}
+                  {users.length}
+
+               </p>
+
+            </div>
+
+            <button
+
+               // className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 transition"
+
+            >
+
+               
+
+            </button>
+
+         </div>
 
          {
 
@@ -311,192 +294,220 @@ function Users(){
 
          }
 
-         {
+         {/* Users */}
 
-            users.length === 0 && (
+         <div className="space-y-5">
 
-               <h2>
-                  No Users Found
-               </h2>
+            {
 
-            )
+               users.map((user)=>(
 
-         }
+                  <div
 
-         {
+                     key={user._id}
 
-            users.map((user)=>(
+                     className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
 
-               <div
+                  >
 
-                  key={user._id}
+                     {/* Left */}
 
-                  style={{
+                     <div>
 
-                     border:
-                     "1px solid black",
+                        <h2 className="text-2xl font-bold text-gray-900">
 
-                     margin:"10px",
+                           {user.name}
 
-                     padding:"10px"
+                        </h2>
 
-                  }}
+                        <p className="text-gray-500 mt-1">
 
-               >
-
-                  <h3>
-                     {user.name}
-                  </h3>
-
-                  <p>
-                     {user.email}
-                  </p>
-
-                  <p>
-
-                     Role:
-                     {" "}
-
-                     {user.role}
-
-                  </p>
-
-                  <p>
-
-                     Status:
-                     {" "}
-
-                     {user.status}
-
-                  </p>
-
-                  {
-
-                     currentUser._id ===
-                     user._id
-
-                     ? (
-
-                        <p>
-
-                           Super Admin account
-                           cannot be modified
+                           {user.email}
 
                         </p>
 
-                     )
+                        <div className="flex items-center gap-3 mt-4">
 
-                     : (
+                           <span className="text-sm font-semibold text-gray-700">
 
-                        <>
+                              Role:
 
-                           <select
+                           </span>
 
-                              value={user.role}
+                           <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold">
 
-                              onChange={(e)=>
+                              {user.role}
 
-                                 updateRole(
+                           </span>
 
-                                    user._id,
+                        </div>
 
-                                    e.target.value
+                        <div className="flex items-center gap-3 mt-3">
 
-                                 )
+                           <span className="text-sm font-semibold text-gray-700">
 
-                              }
+                              Status:
 
-                           >
+                           </span>
 
-                              <option value="EDITOR">
+                           <span
 
-                                 EDITOR
-
-                              </option>
-
-                              <option value="AUTHOR">
-
-                                 AUTHOR
-
-                              </option>
-
-                              <option value="VIEWER">
-
-                                 VIEWER
-
-                              </option>
-
-                           </select>
-
-                           <br /><br />
-
-                           <select
-
-                              value={user.status}
-
-                              onChange={(e)=>
-
-                                 updateStatus(
-
-                                    user._id,
-
-                                    e.target.value
-
-                                 )
-
-                              }
+                              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                 user.status === "active"
+                                 ?
+                                 "bg-green-100 text-green-700"
+                                 :
+                                 "bg-red-100 text-red-700"
+                              }`}
 
                            >
 
-                              <option value="active">
+                              {user.status}
 
-                                 active
+                           </span>
 
-                              </option>
+                        </div>
 
-                              <option value="blocked">
+                     </div>
 
-                                 blocked
+                     {/* Right */}
 
-                              </option>
+                     {
 
-                              <option value="suspended">
+                        currentUser._id ===
+                        user._id
 
-                                 suspended
+                        ? (
 
-                              </option>
+                           <div className="bg-green-50 text-green-700 px-5 py-3 rounded-xl font-semibold">
 
-                           </select>
+                              Super Admin account cannot be modified
 
-                           <br /><br />
+                           </div>
 
-                           <button
+                        )
 
-                              onClick={()=>
+                        : (
 
-                                 deleteUser(
-                                    user._id
-                                 )
+                           <div className="flex flex-col md:flex-row gap-4">
 
-                              }
+                              {/* Role */}
 
-                           >
+                              <select
 
-                              Delete User
+                                 value={user.role}
 
-                           </button>
+                                 onChange={(e)=>
 
-                        </>
+                                    updateRole(
 
-                     )
+                                       user._id,
 
-                  }
+                                       e.target.value
 
-               </div>
+                                    )
 
-            ))
+                                 }
 
-         }
+                                 className="px-4 py-3 rounded-xl border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+
+                              >
+
+                                 <option value="EDITOR">
+
+                                    EDITOR
+
+                                 </option>
+
+                                 <option value="AUTHOR">
+
+                                    AUTHOR
+
+                                 </option>
+
+                                 <option value="VIEWER">
+
+                                    VIEWER
+
+                                 </option>
+
+                              </select>
+
+                              {/* Status */}
+
+                              <select
+
+                                 value={user.status}
+
+                                 onChange={(e)=>
+
+                                    updateStatus(
+
+                                       user._id,
+
+                                       e.target.value
+
+                                    )
+
+                                 }
+
+                                 className="px-4 py-3 rounded-xl border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+
+                              >
+
+                                 <option value="active">
+
+                                    active
+
+                                 </option>
+
+                                 <option value="blocked">
+
+                                    blocked
+
+                                 </option>
+
+                                 <option value="suspended">
+
+                                    suspended
+
+                                 </option>
+
+                              </select>
+
+                              {/* Delete */}
+
+                              <button
+
+                                 onClick={()=>
+
+                                    deleteUser(
+                                       user._id
+                                    )
+
+                                 }
+
+                                 className="border border-red-300 text-red-500 hover:bg-red-50 px-5 py-3 rounded-xl font-semibold transition"
+
+                              >
+
+                                 Delete User
+
+                              </button>
+
+                           </div>
+
+                        )
+
+                     }
+
+                  </div>
+
+               ))
+
+            }
+
+         </div>
 
       </div>
 

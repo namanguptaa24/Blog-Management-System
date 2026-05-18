@@ -1,6 +1,8 @@
 import {
+
    useLocation,
    useNavigate
+
 } from "react-router-dom";
 
 function PreviewBlog(){
@@ -11,34 +13,87 @@ function PreviewBlog(){
    const navigate =
    useNavigate();
 
-   const blog =
-   location.state;
+   // GET PREVIEW DATA
 
-   if(!blog){
+   const previewData =
+
+      location.state
+
+      ||
+
+      JSON.parse(
+
+         localStorage.getItem(
+            "previewBlog"
+         )
+
+      );
+
+   // SAFE DATA
+
+   const formData =
+
+      previewData?.formData
+
+      ||
+
+      {};
+
+   const featurePreview =
+
+      previewData?.featurePreview
+
+      ||
+
+      "";
+
+   const ogPreview =
+
+      previewData?.ogPreview
+
+      ||
+
+      "";
+
+   // NO DATA
+
+   if(!previewData){
 
       return(
 
-         <div
-            style={{
-               padding:"20px"
-            }}
-         >
+         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
 
-            <h1>
-               No Preview Data
-            </h1>
+            <div className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-lg w-full">
 
-            <button
+               <h1 className="text-4xl font-bold text-gray-900 mb-4">
 
-               onClick={()=>
-               navigate("/create-blog")
-               }
+                  No Preview Data Found
 
-            >
+               </h1>
 
-               Back To Create Blog
+               <p className="text-gray-500 text-lg mb-8">
 
-            </button>
+                  Please create a blog first.
+
+               </p>
+
+               <button
+
+                  onClick={()=>
+
+                     navigate("/create-blog")
+
+                  }
+
+                  className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-indigo-700 transition"
+
+               >
+
+                  Go To Create Blog
+
+               </button>
+
+            </div>
 
          </div>
 
@@ -46,261 +101,609 @@ function PreviewBlog(){
 
    }
 
+   // CLEAN TEXT
+
+   const cleanText = (text)=>{
+
+      if(!text) return "";
+
+      return text.replace(
+
+         /[\[\]"]/g,
+
+         ""
+
+      );
+
+   };
+
+   // EDIT BLOG
+
+   const handleEdit = ()=>{
+
+      navigate("/create-blog");
+
+   };
+
+   // READY TO PUBLISH
+
+   const handlePublish = ()=>{
+
+      navigate("/create-blog");
+
+   };
+
    return(
 
-      <div
-         style={{
-            padding:"20px"
-         }}
-      >
+      <div className="min-h-screen bg-gray-100 py-10 px-4">
 
-         <h1>
-            {blog.title}
-         </h1>
+         <div className="max-w-6xl mx-auto">
 
-         <p>
-            {blog.content}
-         </p>
+            {/* TOP */}
 
-         <hr />
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
 
-         <h3>Meta Title</h3>
+               <div>
 
-         <p>
-            {blog.metaTitle}
-         </p>
+                  <h1 className="text-5xl font-bold text-gray-900">
 
-         <h3>Meta Description</h3>
+                     Blog Preview
 
-         <p>
-            {blog.metaDescription}
-         </p>
+                  </h1>
 
-         <h3>Canonical URL</h3>
+                  <p className="text-gray-500 mt-3 text-lg">
 
-         <p>
-            {blog.canonicalUrl}
-         </p>
+                     Final preview before publishing your blog
 
-         <hr />
+                  </p>
 
-         <h3>Feature Image</h3>
+               </div>
 
-         {
+               <button
 
-            blog.featureImagePreview && (
+                  onClick={handleEdit}
 
-               <img
+                  className="bg-black text-white px-6 py-3 rounded-2xl font-semibold hover:bg-gray-800 transition"
 
-                  src={
-                     blog.featureImagePreview
+               >
+
+                  Back To Edit
+
+               </button>
+
+            </div>
+
+            {/* BLOG CARD */}
+
+            <div className="bg-white rounded-[35px] shadow-xl overflow-hidden">
+
+               {/* FEATURE IMAGE */}
+
+               {
+
+                  featurePreview
+
+                  &&
+
+                  (
+
+                     <div className="w-full h-[450px] overflow-hidden">
+
+                        <img
+
+                           src={featurePreview}
+
+                           alt="preview"
+
+                           className="w-full h-full object-cover"
+
+                        />
+
+                     </div>
+
+                  )
+
+               }
+
+               {/* CONTENT */}
+
+               <div className="p-8 md:p-14">
+
+                  {/* CATEGORIES */}
+
+                  {
+
+                     formData.categories
+
+                     &&
+
+                     (
+
+                        <div className="flex flex-wrap gap-3 mb-6">
+
+                           {
+
+                              formData.categories
+
+                              ?.split(",")
+
+                              ?.map((category,index)=>(
+
+                                 <span
+
+                                    key={index}
+
+                                    className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold"
+
+                                 >
+
+                                    {
+
+                                       cleanText(category)
+
+                                    }
+
+                                 </span>
+
+                              ))
+
+                           }
+
+                        </div>
+
+                     )
+
                   }
 
-                  alt="feature"
+                  {/* TITLE */}
 
-                  width="400"
+                  <h1 className="text-5xl font-bold leading-tight text-gray-900 mb-6">
 
-               />
+                     {
 
-            )
+                        formData.title
 
-         }
+                     }
 
-         <hr />
+                  </h1>
 
-         <h3>Open Graph SEO</h3>
+                  {/* META */}
 
-         <p>
+                  <div className="flex flex-wrap gap-4 text-gray-500 mb-10">
 
-            <b>OG Title:</b>
+                     <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
 
-            {" "}
+                        {
 
-            {blog.ogTitle}
+                           formData.status === "draft"
 
-         </p>
+                           ?
 
-         <p>
+                           "Draft"
 
-            <b>OG Description:</b>
+                           :
 
-            {" "}
+                           "Published"
 
-            {blog.ogDescription}
+                        }
 
-         </p>
+                     </span>
 
-         {
+                     <span className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm">
 
-            blog.ogImagePreview && (
+                        SEO Optimized
 
-               <img
+                     </span>
 
-                  src={
-                     blog.ogImagePreview
+                     <span className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm">
+
+                        Canonical Ready
+
+                     </span>
+
+                  </div>
+
+                  {/* META DESCRIPTION */}
+
+                  {
+
+                     formData.metaDescription
+
+                     &&
+
+                     (
+
+                        <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 mb-10">
+
+                           <h2 className="text-2xl font-bold mb-4">
+
+                              Meta Description
+
+                           </h2>
+
+                           <p className="text-gray-700 leading-8 text-lg">
+
+                              {
+
+                                 formData.metaDescription
+
+                              }
+
+                           </p>
+
+                        </div>
+
+                     )
+
                   }
 
-                  alt="og"
+                  {/* BLOG CONTENT */}
 
-                  width="300"
+                  <div className="mb-12">
 
-               />
+                     <h2 className="text-3xl font-bold mb-6">
 
-            )
+                        Blog Content
 
-         }
+                     </h2>
 
-         <hr />
+                     <div className="text-gray-700 leading-9 text-lg whitespace-pre-wrap">
 
-         <h3>Twitter SEO</h3>
+                        {
 
-         <p>
+                           formData.content
 
-            <b>Twitter Title:</b>
+                        }
 
-            {" "}
+                     </div>
 
-            {blog.twitterTitle}
+                  </div>
 
-         </p>
+                  {/* TAGS */}
 
-         <p>
+                  {
 
-            <b>Twitter Description:</b>
+                     formData.tags
 
-            {" "}
+                     &&
 
-            {blog.twitterDescription}
+                     (
 
-         </p>
+                        <div className="mb-12">
 
-         <hr />
+                           <h2 className="text-3xl font-bold mb-6">
 
-         <h3>Tags</h3>
+                              Tags
 
-         <ul>
+                           </h2>
 
-            {
+                           <div className="flex flex-wrap gap-3">
 
-               blog.tags
+                              {
 
-               ?.split(",")
+                                 formData.tags
 
-               .map((tag,index)=>(
+                                 ?.split(",")
 
-                  <li key={index}>
-                     {tag}
-                  </li>
+                                 ?.map((tag,index)=>(
 
-               ))
+                                    <span
 
-            }
+                                       key={index}
 
-         </ul>
+                                       className="bg-gray-200 text-gray-700 px-5 py-2 rounded-full font-medium"
 
-         <h3>Categories</h3>
+                                    >
 
-         <ul>
+                                       #
 
-            {
+                                       {
 
-               blog.categories
+                                          cleanText(tag)
 
-               ?.split(",")
+                                       }
 
-               .map((cat,index)=>(
+                                    </span>
 
-                  <li key={index}>
-                     {cat}
-                  </li>
+                                 ))
 
-               ))
+                              }
 
-            }
+                           </div>
 
-         </ul>
+                        </div>
 
-         <hr />
+                     )
 
-         <h3>FAQ</h3>
+                  }
 
-         <h4>
-            {blog.faqQuestion}
-         </h4>
+                  {/* FAQ */}
 
-         <p>
-            {blog.faqAnswer}
-         </p>
+                  {
 
-         <hr />
+                     formData.faqQuestion
 
-         <h3>Internal Links</h3>
+                     &&
 
-         <ul>
+                     (
 
-            {
+                        <div className="mb-12">
 
-               blog.internalLinks
+                           <h2 className="text-3xl font-bold mb-6">
 
-               ?.split(",")
+                              FAQ
 
-               .map((link,index)=>(
+                           </h2>
 
-                  <li key={index}>
-                     {link}
-                  </li>
+                           <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8">
 
-               ))
+                              <h3 className="text-2xl font-bold text-gray-900 mb-4">
 
-            }
+                                 {
 
-         </ul>
+                                    formData.faqQuestion
 
-         <hr />
+                                 }
 
-         <h3>External Links</h3>
+                              </h3>
 
-         <ul>
+                              <p className="text-gray-700 leading-8 text-lg">
 
-            {
+                                 {
 
-               blog.externalLinks
+                                    formData.faqAnswer
 
-               ?.split(",")
+                                 }
 
-               .map((link,index)=>(
+                              </p>
 
-                  <li key={index}>
-                     {link}
-                  </li>
+                           </div>
 
-               ))
+                        </div>
 
-            }
+                     )
 
-         </ul>
+                  }
 
-         <hr />
+                  {/* SEO SECTION */}
 
-         <h3>Status</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-         <p>
-            {blog.status}
-         </p>
+                     {/* OG SEO */}
 
-         <br />
+                     <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
 
-         <button
+                        <h2 className="text-2xl font-bold mb-6">
 
-            onClick={()=>
-            navigate(-1)
-            }
+                           Open Graph SEO
 
-         >
+                        </h2>
 
-            Back
+                        <div className="space-y-4">
 
-         </button>
+                           <p>
+
+                              <span className="font-bold">
+
+                                 OG Title:
+
+                              </span>
+
+                              {" "}
+
+                              {
+
+                                 formData.ogTitle
+
+                              }
+
+                           </p>
+
+                           <p>
+
+                              <span className="font-bold">
+
+                                 OG Description:
+
+                              </span>
+
+                              {" "}
+
+                              {
+
+                                 formData.ogDescription
+
+                              }
+
+                           </p>
+
+                           {
+
+                              ogPreview
+
+                              &&
+
+                              (
+
+                                 <img
+
+                                    src={ogPreview}
+
+                                    alt="og"
+
+                                    className="w-full h-60 object-cover rounded-2xl mt-5"
+
+                                 />
+
+                              )
+
+                           }
+
+                        </div>
+
+                     </div>
+
+                     {/* TWITTER SEO */}
+
+                     <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+
+                        <h2 className="text-2xl font-bold mb-6">
+
+                           Twitter SEO
+
+                        </h2>
+
+                        <div className="space-y-4">
+
+                           <p>
+
+                              <span className="font-bold">
+
+                                 Twitter Title:
+
+                              </span>
+
+                              {" "}
+
+                              {
+
+                                 formData.twitterTitle
+
+                              }
+
+                           </p>
+
+                           <p>
+
+                              <span className="font-bold">
+
+                                 Twitter Description:
+
+                              </span>
+
+                              {" "}
+
+                              {
+
+                                 formData.twitterDescription
+
+                              }
+
+                           </p>
+
+                        </div>
+
+                     </div>
+
+                  </div>
+
+                  {/* INTERNAL LINKS */}
+
+                  {
+
+                     formData.internalLinks
+
+                     &&
+
+                     (
+
+                        <div className="mt-12 bg-gray-50 border border-gray-100 rounded-3xl p-8">
+
+                           <h2 className="text-2xl font-bold mb-4">
+
+                              Internal Links
+
+                           </h2>
+
+                           <p className="text-gray-700 leading-8">
+
+                              {
+
+                                 formData.internalLinks
+
+                              }
+
+                           </p>
+
+                        </div>
+
+                     )
+
+                  }
+
+                  {/* EXTERNAL LINKS */}
+
+                  {
+
+                     formData.externalLinks
+
+                     &&
+
+                     (
+
+                        <div className="mt-8 bg-gray-50 border border-gray-100 rounded-3xl p-8">
+
+                           <h2 className="text-2xl font-bold mb-4">
+
+                              External Links
+
+                           </h2>
+
+                           <p className="text-gray-700 leading-8">
+
+                              {
+
+                                 formData.externalLinks
+
+                              }
+
+                           </p>
+
+                        </div>
+
+                     )
+
+                  }
+
+                  {/* BUTTONS */}
+
+                  <div className="mt-14 flex flex-wrap gap-5">
+
+                     {/* READY TO PUBLISH */}
+
+                     <button
+
+                        onClick={handlePublish}
+
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:opacity-90 transition"
+
+                     >
+
+                        Ready To Publish
+
+                     </button>
+
+                     {/* EDIT */}
+
+                     <button
+
+                        onClick={handleEdit}
+
+                        className="border border-gray-300 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-100 transition"
+
+                     >
+
+                        Edit Blog
+
+                     </button>
+
+                  </div>
+
+               </div>
+
+            </div>
+
+         </div>
 
       </div>
 

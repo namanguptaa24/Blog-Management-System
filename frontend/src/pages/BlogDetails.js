@@ -20,37 +20,19 @@ const parseArray = (data)=>{
 
    if(Array.isArray(data)){
 
-      return data.map((item)=>
-
-         String(item)
-
-            .replace(/\[/g,"")
-
-            .replace(/\]/g,"")
-
-            .replace(/"/g,"")
-
-            .trim()
-
-      );
+      return data;
 
    }
 
    return String(data)
 
       .replace(/\[/g,"")
-
       .replace(/\]/g,"")
-
       .replace(/"/g,"")
 
       .split(",")
 
-      .map((item)=>
-
-         item.trim()
-
-      )
+      .map((item)=>item.trim())
 
       .filter(Boolean);
 
@@ -67,11 +49,55 @@ function BlogDetails(){
    const [loading,setLoading] =
    useState(true);
 
+   const [scrollProgress,
+      setScrollProgress] =
+   useState(0);
+
    useEffect(()=>{
 
       fetchBlog();
 
    },[slug]);
+
+   useEffect(()=>{
+
+      const handleScroll = ()=>{
+
+         const totalHeight =
+
+            document.body.scrollHeight
+            -
+            window.innerHeight;
+
+         const progress =
+
+            (
+               window.scrollY
+               /
+               totalHeight
+            ) * 100;
+
+         setScrollProgress(
+            progress
+         );
+
+      };
+
+      window.addEventListener(
+         "scroll",
+         handleScroll
+      );
+
+      return()=>{
+
+         window.removeEventListener(
+            "scroll",
+            handleScroll
+         );
+
+      };
+
+   },[]);
 
    const fetchBlog = async()=>{
 
@@ -82,18 +108,17 @@ function BlogDetails(){
             `/blogs/${slug}`
          );
 
-         console.log(
-            "BLOG DATA =>",
-            res.data
-         );
-
          setBlog(res.data);
 
-      }catch(error){
+      }
+
+      catch(error){
 
          console.log(error);
 
-      }finally{
+      }
+
+      finally{
 
          setLoading(false);
 
@@ -103,521 +128,672 @@ function BlogDetails(){
 
    if(loading){
 
-      return <h1>Loading...</h1>;
+      return(
+
+         <div className="min-h-screen flex items-center justify-center bg-[#f5f7fb] dark:bg-[#0f172a]">
+
+            <div className="text-3xl font-black text-gray-900 dark:text-white">
+
+               Loading...
+
+            </div>
+
+         </div>
+
+      );
 
    }
 
    if(!blog){
 
-      return <h1>Blog Not Found</h1>;
+      return(
+
+         <div className="min-h-screen flex items-center justify-center bg-[#f5f7fb] dark:bg-[#0f172a]">
+
+            <div className="text-3xl font-black text-gray-900 dark:text-white">
+
+               Blog Not Found
+
+            </div>
+
+         </div>
+
+      );
 
    }
 
    return(
 
-      <div
-         style={{
+      <div className="bg-[#f5f7fb] dark:bg-[#0f172a] min-h-screen transition overflow-hidden">
 
-            maxWidth:"1000px",
+         {/* PROGRESS BAR */}
 
-            margin:"auto",
+         <div
 
-            padding:"30px",
+            className="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-[9999] transition-all duration-200"
 
-            fontFamily:"Arial"
-
-         }}
-      >
-
-         <Link
-            to="/"
             style={{
 
-               textDecoration:"none",
-
-               color:"blue",
-
-               fontWeight:"bold"
+               width:`${scrollProgress}%`
 
             }}
+
+         />
+
+         {/* HERO */}
+
+         <section className="relative pt-16 pb-20">
+
+            {/* GLOW */}
+
+            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-indigo-500/20 blur-3xl rounded-full"></div>
+
+            <div className="absolute right-0 top-20 w-[500px] h-[500px] bg-pink-500/20 blur-3xl rounded-full"></div>
+
+            <div className="max-w-6xl mx-auto px-6 relative z-10">
+
+               {/* BACK */}
+
+               <Link
+
+                  to="/"
+
+                  className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:underline mb-10"
+
+               >
+
+                  ← Back To Home
+
+               </Link>
+
+               {/* IMAGE */}
+
+               {
+
+                  blog.featureImage && (
+
+                     <div className="relative mb-12">
+
+                        <img
+
+                           src={blog.featureImage}
+
+                           alt={blog.title}
+
+                           className="w-full h-[600px] object-cover rounded-[45px] shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+
+                        />
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent rounded-[45px]"></div>
+
+                        {/* HERO CONTENT */}
+
+                        <div className="absolute bottom-0 left-0 p-10 md:p-14">
+
+                          {/* CATEGORIES */}
+
+<div className="flex flex-wrap gap-3 mb-6">
+
+   {
+
+      parseArray(blog.categories)
+      ?.map((category,index)=>(
+
+         <Link
+
+            key={index}
+
+            to={`/category/${category}`}
+
+            className="inline-block bg-white/20 backdrop-blur-md border border-white/20 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-white/30 transition"
+
          >
 
-            ← Back To Home
+            {category}
 
          </Link>
 
-         <br />
-         <br />
+      ))
 
-         {
+   }
 
-            blog.featureImage && (
+</div>
 
-               <img
+                           <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.05] max-w-5xl mb-6">
 
-   src={blog.featureImage}
+                              {blog.title}
 
-   alt={blog.title}
+                           </h1>
 
-   style={{
+                           <p className="text-lg md:text-2xl text-white/90 max-w-4xl leading-[1.8]">
 
-      width:"100%",
+                              {
 
-      maxWidth:"900px",
+                                 blog.metaDescription
 
-      height:"400px",
+                              }
 
-      objectFit:"contain",
+                           </p>
 
-      display:"block",
+                        </div>
 
-      margin:"0 auto",
-
-      borderRadius:"10px",
-
-      background:"#f5f5f5"
-
-   }}
-
-/>
-            )
-
-         }
-
-         <h1
-            style={{
-
-               marginTop:"20px"
-
-            }}
-         >
-
-            {blog.title}
-
-         </h1>
-
-         <p>
-
-            <b>Status:</b>
-
-            {" "}
-
-            {blog.status}
-
-         </p>
-
-         <p>
-
-            <b>Author:</b>
-
-            {" "}
-
-            {
-
-               blog.author?.name ||
-
-               "Unknown"
-
-            }
-
-         </p>
-
-         <hr />
-
-         <h2>
-            Content
-         </h2>
-
-         <p
-            style={{
-
-               lineHeight:"35px",
-
-               fontSize:"18px"
-
-            }}
-         >
-
-            {blog.content}
-
-         </p>
-
-         <hr />
-
-         <h2>
-            SEO Metadata
-         </h2>
-
-         <p>
-
-            <b>Meta Title:</b>
-
-            {" "}
-
-            {blog.metaTitle}
-
-         </p>
-
-         <p>
-
-            <b>Meta Description:</b>
-
-            {" "}
-
-            {blog.metaDescription}
-
-         </p>
-
-         <p>
-
-            <b>Canonical URL:</b>
-
-            {" "}
-
-            <a
-               href={blog.canonicalUrl}
-               target="_blank"
-               rel="noreferrer"
-            >
-
-               {blog.canonicalUrl}
-
-            </a>
-
-         </p>
-
-         <hr />
-
-         <h2>
-            Open Graph SEO
-         </h2>
-
-         <p>
-
-            <b>OG Title:</b>
-
-            {" "}
-
-            {blog.ogTitle}
-
-         </p>
-
-         <p>
-
-            <b>OG Description:</b>
-
-            {" "}
-
-            {blog.ogDescription}
-
-         </p>
-
-         {
-
-            blog.ogImage && (
-
-               <img
-
-                  src={blog.ogImage}
-
-                  alt="og"
-
-                  width="300"
-
-                  style={{
-
-                     borderRadius:"10px"
-
-                  }}
-
-               />
-
-            )
-
-         }
-
-         <hr />
-
-         <h2>
-            Twitter SEO
-         </h2>
-
-         <p>
-
-            <b>Twitter Title:</b>
-
-            {" "}
-
-            {blog.twitterTitle}
-
-         </p>
-
-         <p>
-
-            <b>Twitter Description:</b>
-
-            {" "}
-
-            {blog.twitterDescription}
-
-         </p>
-
-         <hr />
-
-         <h2>
-            Tags
-         </h2>
-
-         <div
-            style={{
-
-               display:"flex",
-
-               gap:"10px",
-
-               flexWrap:"wrap"
-
-            }}
-         >
-
-            {
-
-               parseArray(blog.tags).map(
-
-                  (tag,index)=>(
-
-                     <span
-
-                        key={index}
-
-                        style={{
-
-                           background:"#eee",
-
-                           padding:"8px 15px",
-
-                           borderRadius:"20px"
-
-                        }}
-                     >
-
-                        #{tag}
-
-                     </span>
+                     </div>
 
                   )
 
-               )
+               }
 
-            }
+               {/* AUTHOR CARD */}
 
-         </div>
+               <div className="bg-white/80 dark:bg-[#111827]/80 backdrop-blur-xl border border-white/20 dark:border-gray-700 rounded-[35px] p-8 shadow-xl flex flex-wrap items-center justify-between gap-8">
 
-         <hr />
+                  <Link
 
-         <h2>
-            Categories
-         </h2>
+                     to={`/author/${
+                        blog.author?.name
+                        ||
+                        blog.author
+                        ||
+                        "Admin"
+                     }`}
 
-         <div
-            style={{
+                     className="flex items-center gap-5"
 
-               display:"flex",
-
-               gap:"10px",
-
-               flexWrap:"wrap"
-
-            }}
-         >
-
-            {
-
-               parseArray(blog.categories).map(
-
-                  (cat,index)=>(
-
-                     <span
-
-                        key={index}
-
-                        style={{
-
-                           background:"#dff0ff",
-
-                           padding:"8px 15px",
-
-                           borderRadius:"20px"
-
-                        }}
-                     >
-
-                        {cat}
-
-                     </span>
-
-                  )
-
-               )
-
-            }
-
-         </div>
-
-         <hr />
-
-         <h2>
-            FAQ
-         </h2>
-
-         {
-
-            blog.faq &&
-            blog.faq.length > 0 ? (
-
-               <div
-                  style={{
-
-                     background:"#f8f8f8",
-
-                     padding:"20px",
-
-                     borderRadius:"10px",
-
-                     marginTop:"10px"
-
-                  }}
-               >
-
-                  <h3
-                     style={{
-
-                        marginBottom:"15px"
-
-                     }}
                   >
 
-                     {
+                     <div className="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white flex items-center justify-center text-3xl font-black shadow-xl">
 
-                        blog.faq[0].question
+                        {
 
-                     }
+                           (
 
-                  </h3>
+                              blog.author?.name
+                              ||
+                              blog.author
+                              ||
+                              "A"
 
-                  <p
-                     style={{
+                           )
 
-                        lineHeight:"30px"
+                           .charAt(0)
+                           .toUpperCase()
 
-                     }}
-                  >
+                        }
 
-                     {
+                     </div>
 
-                        blog.faq[0].answer
+                     <div>
 
-                     }
+                        <p className="text-2xl font-black text-gray-900 dark:text-white">
 
-                  </p>
+                           {
+
+                              blog.author?.name
+                              ||
+                              blog.author
+                              ||
+                              "Admin"
+
+                           }
+
+                        </p>
+
+                        <p className="text-gray-500 dark:text-gray-300">
+
+                           Senior Content Author
+
+                        </p>
+
+                     </div>
+
+                  </Link>
+
+                  <div className="flex flex-wrap gap-4">
+
+                     <div className="bg-green-100 text-green-700 px-6 py-3 rounded-full font-bold">
+
+                        {
+
+                           blog.status
+
+                        }
+
+                     </div>
+
+                     <div className="bg-indigo-100 text-indigo-700 px-6 py-3 rounded-full font-bold">
+
+                        Tech Article
+
+                     </div>
+
+                  </div>
 
                </div>
 
-            ) : (
+            </div>
 
-               <p>
+         </section>
 
-                  No FAQ Available
+         {/* CONTENT */}
 
-               </p>
+         <section className="pb-24">
 
-            )
+            <div className="max-w-5xl mx-auto px-6">
 
-         }
+               {/* ARTICLE */}
 
-         <hr />
+               <div className="bg-white dark:bg-[#111827] rounded-[45px] p-8 md:p-16 shadow-[0_20px_70px_rgba(0,0,0,0.08)] border border-gray-100 dark:border-gray-700">
 
-         <h2>
-            Internal Links
-         </h2>
+                  <div className="flex items-center gap-3 mb-12">
 
-         <ul>
+                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500"></div>
 
-            {
+                     <h2 className="text-4xl font-black text-gray-900 dark:text-white">
 
-               parseArray(
+                        Article Content
 
-                  blog.internalLinks
+                     </h2>
 
-               ).map(
+                  </div>
 
-                  (link,index)=>(
+                  <div className="text-gray-700 dark:text-gray-300 text-[19px] leading-[2.2] tracking-wide whitespace-pre-wrap">
 
-                     <li key={index}>
+                     {
 
-                        <a
-                           href={link}
-                           target="_blank"
-                           rel="noreferrer"
-                        >
+                        blog.content
 
-                           {link}
+                     }
 
-                        </a>
+                  </div>
 
-                     </li>
+               </div>
 
-                  )
+               {/* TAGS */}
 
-               )
+               {
 
-            }
+                  parseArray(blog.tags).length > 0 && (
 
-         </ul>
+                     <div className="mt-14">
 
-         <hr />
+                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-8">
 
-         <h2>
-            External Links
-         </h2>
+                           Explore Topics
 
-         <ul>
+                        </h2>
 
-            {
+                        <div className="flex flex-wrap gap-4">
 
-               parseArray(
+                           {
 
-                  blog.externalLinks
+                              parseArray(blog.tags).map(
 
-               ).map(
+                                 (tag,index)=>(
 
-                  (link,index)=>(
+                                    <Link
 
-                     <li key={index}>
+                                       key={index}
 
-                        <a
+                                       to={`/tag/${tag}`}
 
-                           href={link}
+                                       className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 hover:border-indigo-500 hover:-translate-y-1 hover:shadow-xl text-gray-800 dark:text-gray-200 px-6 py-3 rounded-full transition-all duration-300 font-semibold"
 
-                           target="_blank"
+                                    >
 
-                           rel="noreferrer"
+                                       #{tag}
 
-                        >
+                                    </Link>
 
-                           {link}
+                                 )
 
-                        </a>
+                              )
 
-                     </li>
+                           }
+
+                        </div>
+
+                     </div>
 
                   )
 
-               )
+               }
 
-            }
+               {/* FAQ */}
 
-         </ul>
+               {
+
+                  blog.faq &&
+                  blog.faq.length > 0 && (
+
+                     <div className="mt-20">
+
+                        <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-10">
+
+                           Frequently Asked Questions
+
+                        </h2>
+
+                        <div className="space-y-6">
+
+                           {
+
+                              blog.faq.map((faq,index)=>(
+
+                                 <div
+
+                                    key={index}
+
+                                    className="bg-white dark:bg-[#111827] rounded-[30px] p-8 border border-gray-100 dark:border-gray-700 shadow-lg hover:shadow-2xl transition"
+
+                                 >
+
+                                    <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-5">
+
+                                       {faq.question}
+
+                                    </h3>
+
+                                    <p className="text-gray-600 dark:text-gray-300 leading-[2] text-lg">
+
+                                       {faq.answer}
+
+                                    </p>
+
+                                 </div>
+
+                              ))
+
+                           }
+
+                        </div>
+
+                     </div>
+
+                  )
+
+               }
+
+               {/* SEO CARDS */}
+
+               <div className="grid md:grid-cols-2 gap-8 mt-20">
+
+                  {/* SEO */}
+
+                  <div className="bg-white dark:bg-[#111827] rounded-[35px] p-10 shadow-xl border border-gray-100 dark:border-gray-700">
+
+                     <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-10">
+
+                        SEO Metadata
+
+                     </h2>
+
+                     <div className="space-y-8">
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Meta Title
+
+                           </p>
+
+                           <h3 className="text-xl font-black text-gray-900 dark:text-white">
+
+                              {blog.metaTitle}
+
+                           </h3>
+
+                        </div>
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Meta Description
+
+                           </p>
+
+                           <p className="text-gray-600 dark:text-gray-300 leading-[2]">
+
+                              {blog.metaDescription}
+
+                           </p>
+
+                        </div>
+
+                        {
+
+                           blog.canonicalUrl && (
+
+                              <div>
+
+                                 <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                                    Canonical URL
+
+                                 </p>
+
+                                 <a
+
+                                    href={blog.canonicalUrl}
+
+                                    target="_blank"
+
+                                    rel="noreferrer"
+
+                                    className="text-indigo-600 hover:underline break-all"
+
+                                 >
+
+                                    {blog.canonicalUrl}
+
+                                 </a>
+
+                              </div>
+
+                           )
+
+                        }
+
+                     </div>
+
+                  </div>
+
+                  {/* SOCIAL SEO */}
+
+                  <div className="bg-white dark:bg-[#111827] rounded-[35px] p-10 shadow-xl border border-gray-100 dark:border-gray-700">
+
+                     <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-10">
+
+                        Social SEO Preview
+
+                     </h2>
+
+                     <div className="space-y-8">
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Open Graph Title
+
+                           </p>
+
+                           <h3 className="text-xl font-black text-gray-900 dark:text-white">
+
+                              {blog.ogTitle}
+
+                           </h3>
+
+                        </div>
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Open Graph Description
+
+                           </p>
+
+                           <p className="text-gray-600 dark:text-gray-300 leading-[2]">
+
+                              {blog.ogDescription}
+
+                           </p>
+
+                        </div>
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Twitter Title  
+
+                           </p>
+
+                           <h3 className="text-xl font-black text-gray-900 dark:text-white">
+
+                              {blog.twitterTitle}
+
+                           </h3>
+
+                        </div>
+
+                        <div>
+
+                           <p className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-3">
+
+                              Twitter Description
+
+                           </p>
+
+                           <p className="text-gray-600 dark:text-gray-300 leading-[2]">
+
+                              {blog.twitterDescription}
+
+                           </p>
+
+                        </div>
+
+                     </div>
+
+                  </div>
+
+               </div>
+
+               {/* LINKS */}
+
+               <div className="grid md:grid-cols-2 gap-8 mt-14">
+
+                  {/* INTERNAL */}
+
+                  {
+
+                     blog.internalLinks && (
+
+                        <div className="bg-white dark:bg-[#111827] rounded-[35px] p-8 shadow-xl border border-gray-100 dark:border-gray-700">
+
+                           <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-8">
+
+                              Internal Resources
+
+                           </h2>
+
+                           <div className="space-y-4">
+
+                              {
+
+                                 parseArray(
+                                    blog.internalLinks
+                                 ).map((link,index)=>(
+
+                                    <a
+
+                                       key={index}
+
+                                       href={link}
+
+                                       target="_blank"
+
+                                       rel="noreferrer"
+
+                                       className="block bg-gray-50 dark:bg-[#1f2937] hover:bg-indigo-50 dark:hover:bg-indigo-500/10 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 text-indigo-600 break-all transition"
+
+                                    >
+
+                                       {link}
+
+                                    </a>
+
+                                 ))
+
+                              }
+
+                           </div>
+
+                        </div>
+
+                     )
+
+                  }
+
+                  {/* EXTERNAL */}
+
+                  {
+
+                     blog.externalLinks && (
+
+                        <div className="bg-white dark:bg-[#111827] rounded-[35px] p-8 shadow-xl border border-gray-100 dark:border-gray-700">
+
+                           <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-8">
+
+                              External Resources
+
+                           </h2>
+
+                           <div className="space-y-4">
+
+                              {
+
+                                 parseArray(
+                                    blog.externalLinks
+                                 ).map((link,index)=>(
+
+                                    <a
+
+                                       key={index}
+
+                                       href={link}
+
+                                       target="_blank"
+
+                                       rel="noreferrer"
+
+                                       className="block bg-gray-50 dark:bg-[#1f2937] hover:bg-indigo-50 dark:hover:bg-indigo-500/10 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 text-indigo-600 break-all transition"
+
+                                    >
+
+                                       {link}
+
+                                    </a>
+
+                                 ))
+
+                              }
+
+                           </div>
+
+                        </div>
+
+                     )
+
+                  }
+
+               </div>
+
+            </div>
+
+         </section>
 
       </div>
 

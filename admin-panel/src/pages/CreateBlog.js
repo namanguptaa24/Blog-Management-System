@@ -5,10 +5,12 @@ import {
 
 } from "react";
 
-import API from "../services/api";
+import axios from "axios";
 
 import {
+
    useNavigate
+
 } from "react-router-dom";
 
 function CreateBlog(){
@@ -16,241 +18,179 @@ function CreateBlog(){
    const navigate =
    useNavigate();
 
-   const [formData,setFormData] = useState({
+   // LOCAL STORAGE DATA
 
-      title:"",
-      content:"",
-      metaTitle:"",
-      metaDescription:"",
-      canonicalUrl:"",
+   const savedPreview =
 
-      featureImage:null,
-      ogImage:null,
-
-      featureImagePreview:"",
-      ogImagePreview:"",
-
-      ogTitle:"",
-      ogDescription:"",
-
-      twitterTitle:"",
-      twitterDescription:"",
-
-      tags:"",
-      categories:"",
-
-      faqQuestion:"",
-      faqAnswer:"",
-
-      internalLinks:"",
-      externalLinks:"",
-
-      status:"published"
-
-   });
-
-   useEffect(()=>{
-
-      const savedData =
       JSON.parse(
 
          localStorage.getItem(
-            "draftPreview"
+            "previewBlog"
          )
 
-      );
+      )
 
-      if(savedData){
+      ||
 
-         setFormData({
+      {};
 
-            ...formData,
+   // FORM DATA
 
-            ...savedData,
+   const [formData,setFormData] =
+   useState(
 
-            featureImage:null,
+      savedPreview?.formData
 
-            ogImage:null,
+      ||
 
-            featureImagePreview:"",
+      {
 
-            ogImagePreview:""
-
-         });
+         title:"",
+         content:"",
+         metaTitle:"",
+         metaDescription:"",
+         canonicalUrl:"",
+         ogTitle:"",
+         ogDescription:"",
+         twitterTitle:"",
+         twitterDescription:"",
+         tags:"",
+         categories:"",
+         faqQuestion:"",
+         faqAnswer:"",
+         internalLinks:"",
+         externalLinks:"",
+         status:"published"
 
       }
 
-   },[]);
+   );
 
-   const convertToBase64 = (file)=>{
+   // IMAGES
 
-      return new Promise((resolve,reject)=>{
+   const [featureImage,
+   setFeatureImage] =
+   useState(null);
 
-         const reader =
-         new FileReader();
+   const [ogImage,
+   setOgImage] =
+   useState(null);
 
-         reader.readAsDataURL(file);
+   // IMAGE PREVIEWS
 
-         reader.onload = ()=>{
+   const [featurePreview,
+   setFeaturePreview] =
+   useState("");
 
-            resolve(reader.result);
+   const [ogPreview,
+   setOgPreview] =
+   useState("");
 
-         };
+   const [loading,
+   setLoading] =
+   useState(false);
 
-         reader.onerror = (error)=>{
+   const token =
+   localStorage.getItem("token");
 
-            reject(error);
+   // SAVE ONLY TEXT DATA
 
-         };
+   useEffect(()=>{
 
-      });
+      try{
 
-   };
+         localStorage.setItem(
 
-   const handleChange = async(e)=>{
+            "previewBlog",
 
-      if(
+            JSON.stringify({
 
-         e.target.name ===
-         "featureImage"
+               formData
 
-      ){
+            })
 
-         const file =
-         e.target.files[0];
-
-         if(!file){
-
-            return;
-
-         }
-
-         const base64 =
-         await convertToBase64(
-            file
          );
 
-         setFormData({
-
-            ...formData,
-
-            featureImage:file,
-
-            featureImagePreview:
-            base64
-
-         });
-
-         return;
-
       }
 
-      if(
+      catch(error){
 
-         e.target.name ===
-         "ogImage"
-
-      ){
-
-         const file =
-         e.target.files[0];
-
-         if(!file){
-
-            return;
-
-         }
-
-         const base64 =
-         await convertToBase64(
-            file
+         console.log(
+            "Storage Full"
          );
 
-         setFormData({
-
-            ...formData,
-
-            ogImage:file,
-
-            ogImagePreview:
-            base64
-
-         });
-
-         return;
-
       }
 
-      const updatedData = {
+   },[formData]);
+
+   // HANDLE CHANGE
+
+   const handleChange = (e)=>{
+
+      setFormData({
 
          ...formData,
 
          [e.target.name]:
          e.target.value
 
-      };
-
-      setFormData(updatedData);
-
-      localStorage.setItem(
-
-         "draftPreview",
-
-         JSON.stringify({
-
-            title:
-            updatedData.title,
-
-            content:
-            updatedData.content,
-
-            metaTitle:
-            updatedData.metaTitle,
-
-            metaDescription:
-            updatedData.metaDescription,
-
-            canonicalUrl:
-            updatedData.canonicalUrl,
-
-            ogTitle:
-            updatedData.ogTitle,
-
-            ogDescription:
-            updatedData.ogDescription,
-
-            twitterTitle:
-            updatedData.twitterTitle,
-
-            twitterDescription:
-            updatedData.twitterDescription,
-
-            tags:
-            updatedData.tags,
-
-            categories:
-            updatedData.categories,
-
-            faqQuestion:
-            updatedData.faqQuestion,
-
-            faqAnswer:
-            updatedData.faqAnswer,
-
-            internalLinks:
-            updatedData.internalLinks,
-
-            externalLinks:
-            updatedData.externalLinks,
-
-            status:
-            updatedData.status
-
-         })
-
-      );
+      });
 
    };
+
+   // FEATURE IMAGE
+
+   const handleFeatureImage = (e)=>{
+
+      const file =
+      e.target.files[0];
+
+      if(!file) return;
+
+      setFeatureImage(file);
+
+      const reader =
+      new FileReader();
+
+      reader.onloadend = ()=>{
+
+         setFeaturePreview(
+            reader.result
+         );
+
+      };
+
+      reader.readAsDataURL(file);
+
+   };
+
+   // OG IMAGE
+
+   const handleOgImage = (e)=>{
+
+      const file =
+      e.target.files[0];
+
+      if(!file) return;
+
+      setOgImage(file);
+
+      const reader =
+      new FileReader();
+
+      reader.onloadend = ()=>{
+
+         setOgPreview(
+            reader.result
+         );
+
+      };
+
+      reader.readAsDataURL(file);
+
+   };
+
+   // PREVIEW BLOG
 
    const handlePreview = ()=>{
 
@@ -260,7 +200,13 @@ function CreateBlog(){
 
          {
 
-            state:formData
+            state:{
+
+               formData,
+               featurePreview,
+               ogPreview
+
+            }
 
          }
 
@@ -268,161 +214,68 @@ function CreateBlog(){
 
    };
 
+   // CREATE BLOG
+
    const handleSubmit = async(e)=>{
 
       e.preventDefault();
 
       try{
 
-         const token =
-         localStorage.getItem(
-            "token"
-         );
+         setLoading(true);
 
-         const data =
+         const blogData =
          new FormData();
 
-         data.append(
-            "title",
-            formData.title
-         );
+         // TEXT FIELDS
 
-         data.append(
-            "content",
-            formData.content
-         );
+         Object.keys(formData)
+         .forEach((key)=>{
 
-         data.append(
-            "metaTitle",
-            formData.metaTitle
-         );
+            blogData.append(
 
-         data.append(
-            "metaDescription",
-            formData.metaDescription
-         );
+               key,
 
-         data.append(
-            "canonicalUrl",
-            formData.canonicalUrl
-         );
+               formData[key]
 
-         if(formData.featureImage){
+            );
 
-            data.append(
+         });
+
+         // FEATURE IMAGE
+
+         if(featureImage){
+
+            blogData.append(
 
                "featureImage",
 
-               formData.featureImage
+               featureImage
 
             );
 
          }
 
-         if(formData.ogImage){
+         // OG IMAGE
 
-            data.append(
+         if(ogImage){
+
+            blogData.append(
 
                "ogImage",
 
-               formData.ogImage
+               ogImage
 
             );
 
          }
 
-         data.append(
-            "ogTitle",
-            formData.ogTitle
-         );
+         const response =
+         await axios.post(
 
-         data.append(
-            "ogDescription",
-            formData.ogDescription
-         );
+            "http://localhost:5000/api/blogs/create",
 
-         data.append(
-            "twitterTitle",
-            formData.twitterTitle
-         );
-
-         data.append(
-            "twitterDescription",
-            formData.twitterDescription
-         );
-
-         data.append(
-
-            "tags",
-
-            JSON.stringify(
-
-               formData.tags
-               .split(",")
-
-            )
-
-         );
-
-         data.append(
-
-            "categories",
-
-            JSON.stringify(
-
-               formData.categories
-               .split(",")
-
-            )
-
-         );
-
-         data.append(
-            "faqQuestion",
-            formData.faqQuestion
-         );
-
-         data.append(
-            "faqAnswer",
-            formData.faqAnswer
-         );
-
-         data.append(
-
-            "internalLinks",
-
-            JSON.stringify(
-
-               formData.internalLinks
-               .split(",")
-
-            )
-
-         );
-
-         data.append(
-
-            "externalLinks",
-
-            JSON.stringify(
-
-               formData.externalLinks
-               .split(",")
-
-            )
-
-         );
-
-         data.append(
-            "status",
-            formData.status
-         );
-
-         const res = await API.post(
-
-            "/blogs/create",
-
-            data,
+            blogData,
 
             {
 
@@ -440,27 +293,31 @@ function CreateBlog(){
 
          );
 
-         localStorage.removeItem(
-            "draftPreview"
-         );
+         console.log(response.data);
 
          alert(
             "Blog Created Successfully"
          );
 
-         navigate(
+         // CLEAR STORAGE
 
-            `/blogs/${res.data.blog.slug}`
-
+         localStorage.removeItem(
+            "previewBlog"
          );
 
-      }catch(error){
+         navigate("/blogs");
+
+      }
+
+      catch(error){
 
          console.log(error);
 
          alert(
 
-            error.response?.data?.message ||
+            error?.response?.data?.message
+
+            ||
 
             "Blog Creation Failed"
 
@@ -468,269 +325,721 @@ function CreateBlog(){
 
       }
 
+      finally{
+
+         setLoading(false);
+
+      }
+
    };
 
    return(
 
+      <div className="max-w-7xl mx-auto py-10 px-4">
+
+         <div className="bg-white rounded-[35px] shadow-xl p-8 md:p-12">
+
+            {/* TOP */}
+
+            <div className="mb-10">
+
+               <h1 className="text-5xl font-bold text-gray-900">
+
+                  Create Blog
+
+               </h1>
+
+               <p className="text-gray-500 mt-3 text-lg">
+
+                  Create SEO optimized blog content with advanced metadata
+
+               </p>
+
+            </div>
+
+            <form
+
+               onSubmit={handleSubmit}
+
+               className="space-y-10"
+
+            >
+
+               {/* TITLE */}
+
+               <div>
+
+                  <label className="block text-lg font-semibold mb-3">
+
+                     Blog Title
+
+                  </label>
+
+                  <input
+
+                     type="text"
+
+                     name="title"
+
+                     placeholder="Enter blog title"
+
+                     value={formData.title}
+
+                     onChange={handleChange}
+
+                     required
+
+                     className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500"
+
+                  />
+
+               </div>
+
+               {/* CONTENT */}
+
+               <div>
+
+                  <label className="block text-lg font-semibold mb-3">
+
+                     Blog Content
+
+                  </label>
+
+                  <textarea
+
+                     name="content"
+
+                     rows="10"
+
+                     placeholder="Write your content..."
+
+                     value={formData.content}
+
+                     onChange={handleChange}
+
+                     required
+
+                     className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500"
+
+                  />
+
+               </div>
+
+               {/* META */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <div>
+
+                     <label className="block text-lg font-semibold mb-3">
+
+                        Meta Title
+
+                     </label>
+
+                     <input
+
+                        type="text"
+
+                        name="metaTitle"
+
+                        placeholder="Meta title"
+
+                        value={formData.metaTitle}
+
+                        onChange={handleChange}
+
+                        className="w-full border border-gray-200 rounded-2xl px-6 py-4"
+
+                     />
+
+                  </div>
+
+                  <div>
+
+                     <label className="block text-lg font-semibold mb-3">
+
+                        Meta Description
+
+                     </label>
+
+                     <input
+
+                        type="text"
+
+                        name="metaDescription"
+
+                        placeholder="Meta description"
+
+                        value={formData.metaDescription}
+
+                        onChange={handleChange}
+
+                        className="w-full border border-gray-200 rounded-2xl px-6 py-4"
+
+                     />
+
+                  </div>
+
+               </div>
+
+               {/* CANONICAL */}
+
+               <div>
+
+                  <label className="block text-lg font-semibold mb-3">
+
+                     Canonical URL
+
+                  </label>
+
+                  <input
+
+                     type="text"
+
+                     name="canonicalUrl"
+
+                     placeholder="Canonical URL"
+
+                     value={formData.canonicalUrl}
+
+                     onChange={handleChange}
+
+                     className="w-full border border-gray-200 rounded-2xl px-6 py-4"
+
+                  />
+
+               </div>
+
+               {/* IMAGES */}
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                  {/* FEATURE IMAGE */}
+
+                  <div>
+
+                     <h3 className="font-bold mb-4 text-xl">
+
+                        Feature Image
+
+                     </h3>
+
+                     <label className="border-2 border-dashed border-gray-300 rounded-3xl h-72 flex flex-col items-center justify-center cursor-pointer overflow-hidden bg-gray-50 hover:border-indigo-500 transition">
+
+                        {
+
+                           featurePreview
+
+                           ?
+
+                           (
+
+                              <img
+
+                                 src={featurePreview}
+
+                                 alt="preview"
+
+                                 className="w-full h-full object-cover"
+
+                              />
+
+                           )
+
+                           :
+
+                           (
+
+                              <>
+
+                                 <div className="text-6xl mb-4">
+
+                                    ☁️
+
+                                 </div>
+
+                                 <p className="text-gray-500">
+
+                                    Upload Feature Image
+
+                                 </p>
+
+                              </>
+
+                           )
+
+                        }
+
+                        <input
+
+                           type="file"
+
+                           hidden
+
+                           accept="image/*"
+
+                           onChange={handleFeatureImage}
+
+                        />
+
+                     </label>
+
+                  </div>
+                  
+
+                  {/* OG IMAGE */}
+
+                  <div className="space-y-5">
+ <label
+      className="block text-lg font-semibold mb-3 text-gray-800"
+   >
+
+      Open Graph Title
+
+   </label>
+                     <input
+
+                        type="text"
+
+                        name="ogTitle"
+
+                        placeholder="OG Title"
+
+                        value={formData.ogTitle}
+
+                        onChange={handleChange}
+
+                        className="w-full border border-gray-200 rounded-2xl px-6 py-4"
+
+                     />
+ <label
+      className="block text-lg font-semibold mb-3 text-gray-800"
+   >
+
+      Open Graph Description
+
+   </label>
+                     <textarea
+
+                        name="ogDescription"
+
+                        rows="4"
+
+                        placeholder="OG Description"
+
+                        value={formData.ogDescription}
+
+                        onChange={handleChange}
+
+                        className="w-full border border-gray-200 rounded-2xl px-6 py-4"
+
+                     />
+<h3 className="font-bold mb-4 text-xl">
+
+   OG Image
+
+</h3>
+                     <label className="border-2 border-dashed border-gray-300 rounded-3xl h-44 flex items-center justify-center cursor-pointer overflow-hidden bg-gray-50 hover:border-indigo-500 transition">
+
+                        {
+
+                           ogPreview
+
+                           ?
+
+                           (
+
+                              <img
+
+                                 src={ogPreview}
+
+                                 alt="og"
+
+                                 className="w-full h-full object-cover"
+
+                              />
+
+                           )
+
+                           :
+
+                           (
+                              
+
+                              <p className="text-gray-500">
+
+                                 Upload OG Image
+
+                              </p>
+
+                           )
+
+                        }
+
+                        <input
+
+                           type="file"
+
+                           hidden
+
+                           accept="image/*"
+
+                           onChange={handleOgImage}
+
+                        />
+
+                     </label>
+
+                  </div>
+
+               </div>{/* EXTRA SEO */}
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+   {/* LEFT */}
+
+   <div className="space-y-6">
+
+      {/* TWITTER TITLE */}
+
       <div>
 
-         <h1>Create Blog</h1>
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
 
-         <form onSubmit={handleSubmit}>
+            Twitter SEO Title
 
-            <input
-               type="text"
-               name="title"
-               placeholder="Title"
-               value={formData.title}
-               onChange={handleChange}
-            />
+         </label>
 
-            <br /><br />
+         <input
 
-            <textarea
-               name="content"
-               placeholder="Content"
-               value={formData.content}
-               onChange={handleChange}
-            />
+            type="text"
 
-            <br /><br />
+            name="twitterTitle"
 
-            <input
-               type="text"
-               name="metaTitle"
-               placeholder="Meta Title"
-               value={formData.metaTitle}
-               onChange={handleChange}
-            />
+            placeholder="Twitter SEO Title"
 
-            <br /><br />
+            value={formData.twitterTitle}
 
-            <input
-               type="text"
-               name="metaDescription"
-               placeholder="Meta Description"
-               value={formData.metaDescription}
-               onChange={handleChange}
-            />
+            onChange={handleChange}
 
-            <br /><br />
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
 
-            <input
-               type="text"
-               name="canonicalUrl"
-               placeholder="Canonical URL"
-               value={formData.canonicalUrl}
-               onChange={handleChange}
-            />
+         />
 
-            <br /><br />
+      </div>
 
-            <h3>Feature Image</h3>
+      {/* TWITTER DESCRIPTION */}
 
-            <input
-               type="file"
-               name="featureImage"
-               onChange={handleChange}
-            />
+      <div>
 
-            <br /><br />
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
 
-            {
+            Twitter SEO Description
 
-               formData.featureImagePreview && (
+         </label>
 
-                  <img
+         <textarea
 
-                     src={
-                        formData.featureImagePreview
-                     }
+            name="twitterDescription"
 
-                     alt="preview"
+            rows="4"
 
-                     width="250"
+            placeholder="Twitter SEO Description"
 
-                  />
+            value={formData.twitterDescription}
 
-               )
+            onChange={handleChange}
 
-            }
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
 
-            <br /><br />
+         />
 
-            <h3>Open Graph SEO</h3>
+      </div>
 
-            <input
-               type="text"
-               name="ogTitle"
-               placeholder="OG Title"
-               value={formData.ogTitle}
-               onChange={handleChange}
-            />
+      {/* FAQ QUESTION */}
 
-            <br /><br />
+      <div>
 
-            <input
-               type="text"
-               name="ogDescription"
-               placeholder="OG Description"
-               value={formData.ogDescription}
-               onChange={handleChange}
-            />
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
 
-            <br /><br />
+            FAQ Question
 
-            <h3>OG Image Upload</h3>
+         </label>
 
-            <input
-               type="file"
-               name="ogImage"
-               onChange={handleChange}
-            />
+         <input
 
-            <br /><br />
+            type="text"
 
-            {
+            name="faqQuestion"
 
-               formData.ogImagePreview && (
+            placeholder="FAQ Question"
 
-                  <img
+            value={formData.faqQuestion}
 
-                     src={
-                        formData.ogImagePreview
-                     }
+            onChange={handleChange}
 
-                     alt="og preview"
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
 
-                     width="250"
+         />
 
-                  />
+      </div>
 
-               )
+      {/* FAQ ANSWER */}
 
-            }
+      <div>
 
-            <br /><br />
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
 
-            <h3>Twitter SEO</h3>
+            FAQ Answer
 
-            <input
-               type="text"
-               name="twitterTitle"
-               placeholder="Twitter Title"
-               value={formData.twitterTitle}
-               onChange={handleChange}
-            />
+         </label>
 
-            <br /><br />
+         <textarea
 
-            <input
-               type="text"
-               name="twitterDescription"
-               placeholder="Twitter Description"
-               value={formData.twitterDescription}
-               onChange={handleChange}
-            />
+            name="faqAnswer"
 
-            <br /><br />
+            rows="4"
 
-            <input
-               type="text"
-               name="tags"
-               placeholder="Tags comma separated"
-               value={formData.tags}
-               onChange={handleChange}
-            />
+            placeholder="FAQ Answer"
 
-            <br /><br />
+            value={formData.faqAnswer}
 
-            <input
-               type="text"
-               name="categories"
-               placeholder="Categories comma separated"
-               value={formData.categories}
-               onChange={handleChange}
-            />
+            onChange={handleChange}
 
-            <br /><br />
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
 
-            <input
-               type="text"
-               name="faqQuestion"
-               placeholder="FAQ Question"
-               value={formData.faqQuestion}
-               onChange={handleChange}
-            />
+         />
 
-            <br /><br />
+      </div>
 
-            <input
-               type="text"
-               name="faqAnswer"
-               placeholder="FAQ Answer"
-               value={formData.faqAnswer}
-               onChange={handleChange}
-            />
+   </div>
 
-            <br /><br />
+   {/* RIGHT */}
 
-            <input
-               type="text"
-               name="internalLinks"
-               placeholder="Internal Links"
-               value={formData.internalLinks}
-               onChange={handleChange}
-            />
+   <div className="space-y-6">
 
-            <br /><br />
+      {/* TAGS */}
 
-            <input
-               type="text"
-               name="externalLinks"
-               placeholder="External Links"
-               value={formData.externalLinks}
-               onChange={handleChange}
-            />
+      <div>
 
-            <br /><br />
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
 
-            <select
-               name="status"
-               value={formData.status}
-               onChange={handleChange}
-            >
+            Tags
 
-               <option value="published">
-                  Published
-               </option>
+         </label>
 
-               <option value="draft">
-                  Draft
-               </option>
+         <input
 
-            </select>
+            type="text"
 
-            <br /><br />
+            name="tags"
 
-            <button
-               type="button"
-               onClick={handlePreview}
-            >
+            placeholder="Tags (comma separated)"
 
-               Preview Blog
+            value={formData.tags}
 
-            </button>
+            onChange={handleChange}
 
-            {" "}
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
 
-            <button type="submit">
+         />
 
-               Create Blog
+      </div>
 
-            </button>
+      {/* CATEGORIES */}
 
-         </form>
+      <div>
+
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
+
+            Categories
+
+         </label>
+
+         <input
+
+            type="text"
+
+            name="categories"
+
+            placeholder="Categories (comma separated)"
+
+            value={formData.categories}
+
+            onChange={handleChange}
+
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
+
+         />
+
+      </div>
+
+      {/* INTERNAL LINKS */}
+
+      <div>
+
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
+
+            Internal Links
+
+         </label>
+
+         <textarea
+
+            name="internalLinks"
+
+            rows="4"
+
+            placeholder="Internal Links"
+
+            value={formData.internalLinks}
+
+            onChange={handleChange}
+
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
+
+         />
+
+      </div>
+
+      {/* EXTERNAL LINKS */}
+
+      <div>
+
+         <label className="block text-lg font-semibold mb-3 text-gray-800">
+
+            External Links
+
+         </label>
+
+         <textarea
+
+            name="externalLinks"
+
+            rows="4"
+
+            placeholder="External Links"
+
+            value={formData.externalLinks}
+
+            onChange={handleChange}
+
+            className="w-full border border-gray-200 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-indigo-500"
+
+         />
+
+      </div>
+
+   </div>
+
+</div>
+
+               {/* FOOTER */}
+
+               <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-8 border-t border-gray-100">
+
+                  {/* STATUS */}
+
+                  <div className="w-full lg:w-72">
+
+                     <label className="block text-lg font-semibold text-gray-800 mb-3">
+
+                        Publish Status
+
+                     </label>
+
+                     <select
+
+                        name="status"
+
+                        value={formData.status}
+
+                        onChange={handleChange}
+
+                        className="w-full border border-gray-200 rounded-2xl px-6 py-4 bg-white outline-none focus:border-indigo-500"
+
+                     >
+
+                        <option value="published">
+
+                           Publish Now
+
+                        </option>
+
+                        <option value="draft">
+
+                           Save As Draft
+
+                        </option>
+
+                     </select>
+
+                  </div>
+
+                  {/* BUTTONS */}
+
+                  <div className="flex flex-wrap gap-4">
+
+                     {/* PREVIEW */}
+
+                     <button
+
+                        type="button"
+
+                        onClick={handlePreview}
+
+                        className="border border-indigo-500 text-indigo-600 px-8 py-4 rounded-2xl font-semibold hover:bg-indigo-50 transition"
+
+                     >
+
+                        Preview Blog
+
+                     </button>
+
+                     {/* SUBMIT */}
+
+                     <button
+
+                        type="submit"
+
+                        disabled={loading}
+
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-2xl font-semibold shadow-lg hover:opacity-90 transition"
+
+                     >
+
+                        {
+
+                           loading
+
+                           ?
+
+                           "Processing..."
+
+                           :
+
+                           formData.status === "draft"
+
+                           ?
+
+                           "Save Draft"
+
+                           :
+
+                           "Publish Blog"
+
+                        }
+
+                     </button>
+
+                  </div>
+
+               </div>
+
+            </form>
+
+         </div>
 
       </div>
 
