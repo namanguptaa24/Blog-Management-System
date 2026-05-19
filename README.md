@@ -276,8 +276,8 @@ This project helped improve my understanding of:
 
 Modern responsive homepage with premium hero section, trending blogs, search functionality, categories, and latest blog listings.
 
-![Public Website Homepage] (<img width="975" height="555" alt="image" src="https://github.com/user-attachments/assets/ba89a80f-c030-47fa-a8b0-69bedb19e4b0" />
-) (<img width="975" height="552" alt="image" src="https://github.com/user-attachments/assets/7b1ff220-6e73-4fee-9f2a-dc65301f0da7" />
+![Public Website Homepage] <img width="975" height="555" alt="image" src="https://github.com/user-attachments/assets/ba89a80f-c030-47fa-a8b0-69bedb19e4b0" />
+(<img width="975" height="552" alt="image" src="https://github.com/user-attachments/assets/7b1ff220-6e73-4fee-9f2a-dc65301f0da7" />
 )
 
 ---
