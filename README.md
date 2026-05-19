@@ -312,7 +312,8 @@ User registration system with role-based access support and secure authenticatio
 
 Advanced admin dashboard for managing blogs, users, analytics, drafts, and platform operations.
 
-![Super Admin Dashboard](https://github.com/user-attachments/assets/c8806830-20b1-4056-b816-97091ce88805)
+![Super Admin Dashboard](<img width="975" height="555" alt="image" src="https://github.com/user-attachments/assets/3c7b693d-5507-495b-8a88-3f57463902c8" />
+)
 
 ---
 
