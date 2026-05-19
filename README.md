@@ -276,7 +276,9 @@ This project helped improve my understanding of:
 
 Modern responsive homepage with premium hero section, trending blogs, search functionality, categories, and latest blog listings.
 
-![Public Website Homepage](./screenshots/homepage.png)
+![Public Website Homepage](<img width="975" height="555" alt="image" src="https://github.com/user-attachments/assets/ba89a80f-c030-47fa-a8b0-69bedb19e4b0" />
+) (<img width="975" height="552" alt="image" src="https://github.com/user-attachments/assets/7b1ff220-6e73-4fee-9f2a-dc65301f0da7" />
+)
 
 ---
 
@@ -284,7 +286,8 @@ Modern responsive homepage with premium hero section, trending blogs, search fun
 
 Detailed blog reading interface with SEO metadata, categories, tags, markdown rendering, feature images, and premium UI layout.
 
-![Read Blog Page](./screenshots/read-blog-page.png)
+![Read Blog Page]()
+<img width="975" height="553" alt="image" src="https://github.com/user-attachments/assets/52aebd2f-affe-42c9-b0e8-433770f211c0" />
 
 ---
 
@@ -292,7 +295,8 @@ Detailed blog reading interface with SEO metadata, categories, tags, markdown re
 
 Secure JWT authentication login page with responsive modern UI design and protected access system.
 
-![Login Page](./screenshots/login-page.png)
+![Login Page](<img width="975" height="554" alt="image" src="https://github.com/user-attachments/assets/41604af8-0d8f-485b-892d-d3cce41e7055" />
+)
 
 ---
 
@@ -300,7 +304,8 @@ Secure JWT authentication login page with responsive modern UI design and protec
 
 User registration system with role-based access support and secure authentication workflow.
 
-![Register Page](./screenshots/register-page.png)
+![Register Page](<img width="975" height="553" alt="image" src="https://github.com/user-attachments/assets/6907949d-d904-43af-a9d4-3d4476668d1f" />
+)
 
 ---
 
@@ -316,7 +321,8 @@ Advanced admin dashboard for managing blogs, users, analytics, drafts, and platf
 
 Viewer dashboard providing personalized blog access, reading management, and responsive user experience.
 
-![Viewer Dashboard](./screenshots/viewer-dashboard.png)
+![Viewer Dashboard](<img width="975" height="555" alt="image" src="https://github.com/user-attachments/assets/92f738dc-e91c-4176-9d9c-d868ac4f7196" />
+)
 
 ---
 
@@ -324,7 +330,17 @@ Viewer dashboard providing personalized blog access, reading management, and res
 
 Editor dashboard for content creators to manage, update, and publish blogs efficiently.
 
-![Editor Dashboard](./screenshots/editor-dashboard.png)
+![Editor Dashboard](<img width="1919" height="1086" alt="image" src="https://github.com/user-attachments/assets/52f60060-4b02-4010-a371-14be32690cbd" />
+)
+
+---
+
+## Author Dashboard
+
+Dedicated dashboard for content creators to manage their own blogs, drafts, publishing workflow, and content updates with role-based access control.
+
+![Author Dashboard](<img width="975" height="550" alt="image" src="https://github.com/user-attachments/assets/4f3c10ed-7b35-42bf-8e47-de1fb62a3289" />
+)
 
 ---
 
@@ -332,7 +348,8 @@ Editor dashboard for content creators to manage, update, and publish blogs effic
 
 Centralized blog management page displaying all published blogs with search and filtering features.
 
-![View All Blogs](./screenshots/view-all-blogs.png)
+![View All Blogs](<img width="975" height="551" alt="image" src="https://github.com/user-attachments/assets/c8806830-20b1-4056-b816-97091ce88805" />
+)
 
 ---
 
@@ -340,7 +357,8 @@ Centralized blog management page displaying all published blogs with search and 
 
 Role-based user management system allowing Super Admins to manage authors, viewers, and editors.
 
-![User Management](./screenshots/user-management.png)
+![User Management](<img width="975" height="553" alt="image" src="https://github.com/user-attachments/assets/7accdac3-5b35-4b23-bd2c-b06ec2a2c5b8" />
+)
 
 ---
 
@@ -348,7 +366,11 @@ Role-based user management system allowing Super Admins to manage authors, viewe
 
 Draft management system for saving unpublished blogs and continuing content editing later.
 
-![Draft Blogs](./screenshots/draft-blogs.png)
+![Draft Blogs](<img width="975" height="552" alt="image" src="https://github.com/user-attachments/assets/46040e63-aae2-4339-9ac9-b786db5a5527" />
+)
+
+---
+
 # Author
 
 Naman Gupta
