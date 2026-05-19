@@ -166,6 +166,8 @@ Using separate frontend and backend services also helped me better understand ho
 Although Next.js provides powerful features like Server Side Rendering and advanced SEO optimization, the MERN stack was more suitable for my system resources and learning goals for this project.
 
 This project focuses on building strong backend engineering fundamentals, scalable APIs, authentication systems, and a modern responsive frontend using React.js.
+
+
 ---
 
 # Installation
@@ -267,6 +269,86 @@ This project helped improve my understanding of:
 
 ---
 
+
+# Project Screenshots
+
+## Public Website Homepage
+
+Modern responsive homepage with premium hero section, trending blogs, search functionality, categories, and latest blog listings.
+
+![Public Website Homepage](./screenshots/homepage.png)
+
+---
+
+## Read Blog Page
+
+Detailed blog reading interface with SEO metadata, categories, tags, markdown rendering, feature images, and premium UI layout.
+
+![Read Blog Page](./screenshots/read-blog-page.png)
+
+---
+
+## Login Page
+
+Secure JWT authentication login page with responsive modern UI design and protected access system.
+
+![Login Page](./screenshots/login-page.png)
+
+---
+
+## Register Page
+
+User registration system with role-based access support and secure authentication workflow.
+
+![Register Page](./screenshots/register-page.png)
+
+---
+
+## Super Admin Dashboard
+
+Advanced admin dashboard for managing blogs, users, analytics, drafts, and platform operations.
+
+![Super Admin Dashboard](./screenshots/admin-dashboard.png)
+
+---
+
+## Viewer Dashboard
+
+Viewer dashboard providing personalized blog access, reading management, and responsive user experience.
+
+![Viewer Dashboard](./screenshots/viewer-dashboard.png)
+
+---
+
+## Editor Dashboard
+
+Editor dashboard for content creators to manage, update, and publish blogs efficiently.
+
+![Editor Dashboard](./screenshots/editor-dashboard.png)
+
+---
+
+## View All Blogs
+
+Centralized blog management page displaying all published blogs with search and filtering features.
+
+![View All Blogs](./screenshots/view-all-blogs.png)
+
+---
+
+## User Management
+
+Role-based user management system allowing Super Admins to manage authors, viewers, and editors.
+
+![User Management](./screenshots/user-management.png)
+
+---
+
+## Draft Blogs
+
+Draft management system for saving unpublished blogs and continuing content editing later.
+
+![Draft Blogs](./screenshots/draft-blogs.png)
 # Author
 
 Naman Gupta

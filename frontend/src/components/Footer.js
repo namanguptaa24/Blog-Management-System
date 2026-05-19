@@ -21,10 +21,7 @@ function Footer(){
             <p
                className="text-gray-400"
             >
-
-               MERN Stack Blogging Platform
-               with SEO, Authentication,
-               Roles and Admin Panel.
+A modern full-stack blogging platform focused on technology, innovation, developer insights, and scalable web solutions.
 
             </p>
 

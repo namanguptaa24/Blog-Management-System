@@ -31,11 +31,11 @@ function About(){
                      Modern Developer Blogging Platform
                   </h1>
 
-                  <p className="text-xl text-indigo-100 leading-10 max-w-4xl">
+                  {/* <p className="text-xl text-indigo-100 leading-10 max-w-4xl">
 
                      A modern MERN stack blogging platform focused on SEO optimization, scalable architecture, developer experience, and premium content publishing.
 
-                  </p>
+                  </p> */}
 
                </div>
 
