@@ -336,7 +336,7 @@ Editor dashboard for content creators to manage, update, and publish blogs effic
 
 Dedicated dashboard for content creators to manage their own blogs, drafts, publishing workflow, and content updates with role-based access control.
 
-![Author Dashboard](https://github.com/user-attachments/assets/c8806830-20b1-4056-b816-97091ce88805)
+![Author Dashboard](https://github.com/user-attachments/assets/4f3c10ed-7b35-42bf-8e47-de1fb62a3289)
 
 ---
 
@@ -344,7 +344,7 @@ Dedicated dashboard for content creators to manage their own blogs, drafts, publ
 
 Centralized blog management page displaying all published blogs with search and filtering features.
 
-![View All Blogs](https://github.com/user-attachments/assets/4f3c10ed-7b35-42bf-8e47-de1fb62a3289)
+![View All Blogs](https://github.com/user-attachments/assets/c8806830-20b1-4056-b816-97091ce88805)
 
 ---
 
