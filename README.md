@@ -60,6 +60,7 @@ This project is designed to simulate a real-world blogging platform where users 
 ```bash
 frontend/
 backend/
+admin-panel/
 ```
 
 ---
@@ -123,6 +124,9 @@ backend/
 - Edit Any Blog
 - Delete Any Blog
 
+## Editor
+- Edit Any Blog
+- Delete Any Blog
 ---
 
 # SEO Features
@@ -141,8 +145,6 @@ This project contains advanced SEO features including:
 - External Links
 
 ---
-
-# Why I Chose MERN Instead of Next.js
 
 # Why I Chose MERN Instead of Next.js
 
@@ -185,7 +187,7 @@ git clone <repository-url>
 ```bash
 cd backend
 npm install
-npm run server
+npm run dev
 ```
 
 ---
@@ -199,6 +201,13 @@ npm start
 ```
 
 ---
+
+# Admin-panel Setup
+
+```bash
+cd admin-panel
+npm start
+```
 
 # Environment Variables
 
